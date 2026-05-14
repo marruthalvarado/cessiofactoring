@@ -358,12 +358,12 @@ function parseWorkbook(wb, fileName){
   if(!ctrlName) throw new Error('No se encontró la hoja Control_Operación. Hojas disponibles: ' + sheetNames.join(', '));
 
   // Read as array of arrays (not objects) — avoids encoding issues with column names
-  const ctrlAOA = XLSX.utils.sheet_to_json(wb.Sheets[ctrlName], { header:1, defval:null, raw:false });
+  const ctrlAOA = XLSX.utils.sheet_to_json(wb.Sheets[ctrlName], { header:1, defval:null, raw:true });
   console.log('Hojas encontradas:', wb.SheetNames);
   console.log('Hoja control:', ctrlName, '| Hoja gestiones:', gestName);
   console.log('Filas control (primeras 3):', ctrlAOA.slice(0,3));
-  console.log('Fila 2 col 5 (exposicion):', ctrlAOA[1] && ctrlAOA[1][5]);
-  const gestAOA = gestName ? XLSX.utils.sheet_to_json(wb.Sheets[gestName], { header:1, defval:null, raw:false }) : [];
+  console.log('Fila 2 col 5 (exposicion) raw:', ctrlAOA[1] && ctrlAOA[1][5], '| toNum:', ctrlAOA[1] && toNum(ctrlAOA[1][5]));
+  const gestAOA = gestName ? XLSX.utils.sheet_to_json(wb.Sheets[gestName], { header:1, defval:null, raw:true }) : [];
 
   // Skip header row (row 0)
   const ctrlRows = ctrlAOA.slice(1).filter(r => r && r.length > 5);
@@ -377,7 +377,7 @@ function parseWorkbook(wb, fileName){
   // col 13 = Elegible judicialización
 
   const active = ctrlRows.filter(r => {
-    const exp = parseFloat(r[5]) || 0;
+    const exp = toNum(r[5]) || 0;
     return exp > 0;
   });
 
@@ -388,7 +388,7 @@ function parseWorkbook(wb, fileName){
   active.forEach(r => {
     const t = String(r[11] || '').trim();
     const name = String(r[1] || '').trim();
-    const exp = parseFloat(r[5]) || 0;
+    const exp = toNum(r[5]) || 0;
     if(tramoMap[t]){
       tramoMap[t].ops++;
       tramoMap[t].clients.add(name);
@@ -409,15 +409,15 @@ function parseWorkbook(wb, fileName){
   const prioStats = { Alta:{ops:0,exp:0}, Media:{ops:0,exp:0}, Baja:{ops:0,exp:0} };
   active.forEach(r => {
     const p = String(r[12]||'').trim();
-    if(prioStats[p]){ prioStats[p].ops++; prioStats[p].exp += parseFloat(r[5])||0; }
+    if(prioStats[p]){ prioStats[p].ops++; prioStats[p].exp += toNum(r[5])||0; }
   });
 
   // Judicial
   const judicial = active.filter(r => String(r[13]||'').trim().toLowerCase()==='si');
-  const judialExp = judicial.reduce((s,r)=>s+(parseFloat(r[5])||0),0);
+  const judialExp = judicial.reduce((s,r)=>s+(toNum(r[5])||0),0);
 
   // Days
-  const dias = active.map(r=>parseFloat(r[9])||0).filter(d=>d>0);
+  const dias = active.map(r=>toNum(r[9])||0).filter(d=>d>0);
   const avgDias = dias.length ? Math.round(dias.reduce((a,b)=>a+b,0)/dias.length) : 0;
 
   // Clients
@@ -430,8 +430,8 @@ function parseWorkbook(wb, fileName){
   const clientMap = {};
   active.forEach(r => {
     const name = String(r[1]||'').trim();
-    const exp = parseFloat(r[5])||0;
-    const d = parseFloat(r[9])||0;
+    const exp = toNum(r[5])||0;
+    const d = toNum(r[9])||0;
     if(!clientMap[name]) clientMap[name]={ name, exp:0, dias:0, tramo:String(r[11]||''), prio:String(r[12]||''), judic:String(r[13]||'No') };
     clientMap[name].exp += exp;
     if(d > clientMap[name].dias){ clientMap[name].dias=d; clientMap[name].tramo=String(r[11]||''); }
@@ -567,8 +567,8 @@ function renderGestiones(){
 
 // ── ALERTAS ──
 function renderAlertas(){
-  const crit = DATA.active.filter(r=>(parseFloat(r[9])||0)>90);
-  const critExp = crit.reduce((s,r)=>s+(parseFloat(r[5])||0),0);
+  const crit = DATA.active.filter(r=>(toNum(r[9])||0)>90);
+  const critExp = crit.reduce((s,r)=>s+(toNum(r[5])||0),0);
 
   document.getElementById('alert-cards').innerHTML =
     `<div class="alert-card critical"><div class="alert-title">🔴 Clientes >90 días</div><div class="alert-value">${crit.length} ops</div><div class="alert-desc">$${fmt(critExp)} — Acción inmediata</div></div>` +
@@ -578,18 +578,18 @@ function renderAlertas(){
     `<div class="alert-card info"><div class="alert-title">🔵 Cartera preventiva</div><div class="alert-value">${DATA.tramos[0].ops} ops</div><div class="alert-desc">$${fmt(DATA.prevExp)} — Ventana proactiva</div></div>` +
     `<div class="alert-card warning"><div class="alert-title">🟡 Prom. días vencidos</div><div class="alert-value">${DATA.avgDias} días</div><div class="alert-desc">Antigüedad severa de cartera</div></div>`;
 
-  const critOps = DATA.active.filter(r=>(parseFloat(r[9])||0)>90).length;
-  const medOps  = DATA.active.filter(r=>{const d=parseFloat(r[9])||0;return d>30&&d<=90;}).length;
-  const lowOps  = DATA.active.filter(r=>{const d=parseFloat(r[9])||0;return d>0&&d<=30;}).length;
+  const critOps = DATA.active.filter(r=>(toNum(r[9])||0)>90).length;
+  const medOps  = DATA.active.filter(r=>{const d=toNum(r[9])||0;return d>30&&d<=90;}).length;
+  const lowOps  = DATA.active.filter(r=>{const d=toNum(r[9])||0;return d>0&&d<=30;}).length;
 
   CHARTS.sem = mkChart('chartSemaforo','pie',
     { labels:['🔴 Crítico (>90d)','🟡 Alerta (31-90d)','🟢 Temprano (1-30d)','🔵 Preventivo'], datasets:[{data:[critOps,medOps,lowOps,DATA.tramos[0].ops],backgroundColor:['#EF4444','#F59E0B','#22C55E','#0EA5E9'],borderWidth:2,borderColor:'#fff'}] },
     { responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{boxWidth:10,padding:8,font:{size:10}}}} }
   );
 
-  const critExpU = DATA.active.filter(r=>(parseFloat(r[9])||0)>90).reduce((s,r)=>s+(parseFloat(r[5])||0),0);
-  const medExpU  = DATA.active.filter(r=>{const d=parseFloat(r[9])||0;return d>30&&d<=90;}).reduce((s,r)=>s+(parseFloat(r[5])||0),0);
-  const lowExpU  = DATA.active.filter(r=>{const d=parseFloat(r[9])||0;return d>0&&d<=30;}).reduce((s,r)=>s+(parseFloat(r[5])||0),0);
+  const critExpU = DATA.active.filter(r=>(toNum(r[9])||0)>90).reduce((s,r)=>s+(toNum(r[5])||0),0);
+  const medExpU  = DATA.active.filter(r=>{const d=toNum(r[9])||0;return d>30&&d<=90;}).reduce((s,r)=>s+(toNum(r[5])||0),0);
+  const lowExpU  = DATA.active.filter(r=>{const d=toNum(r[9])||0;return d>0&&d<=30;}).reduce((s,r)=>s+(toNum(r[5])||0),0);
 
   document.getElementById('urgencia-matrix').innerHTML =
     `<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
@@ -678,6 +678,17 @@ function mkChart(id, type, data, options){
 function kpi(label, value, valClass, accent, sub, badgeType, badgeText){
   const badge = badgeText ? `<div class="kpi-badge ${badgeType||'neutral'}">${badgeText}</div>` : '';
   return `<div class="kpi-card"><div class="kpi-accent ${accent}"></div><div class="kpi-label">${label}</div><div class="kpi-value ${valClass||''}">${value}</div>${badge}<div class="kpi-sub">${sub}</div></div>`;
+}
+
+function toNum(v){
+  if(v===null||v===undefined||v==="") return 0;
+  if(typeof v==="number") return v;
+  // Handle Excel formatted strings like "56,964.76" or "1.316.029,04"
+  const s = String(v).replace(/[^0-9.,-]/g,"");
+  // If comma is decimal separator (European format)
+  if(s.match(/\.,/)) return parseFloat(s.replace(/\./g,"").replace(",",".")) || 0;
+  // Standard format
+  return parseFloat(s.replace(/,/g,"")) || 0;
 }
 
 function fmt(n){
