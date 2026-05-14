@@ -358,8 +358,12 @@ function parseWorkbook(wb, fileName){
   if(!ctrlName) throw new Error('No se encontró la hoja Control_Operación. Hojas disponibles: ' + sheetNames.join(', '));
 
   // Read as array of arrays (not objects) — avoids encoding issues with column names
-  const ctrlAOA = XLSX.utils.sheet_to_json(wb.Sheets[ctrlName], { header:1, defval:null, raw:true });
-  const gestAOA = gestName ? XLSX.utils.sheet_to_json(wb.Sheets[gestName], { header:1, defval:null, raw:true }) : [];
+  const ctrlAOA = XLSX.utils.sheet_to_json(wb.Sheets[ctrlName], { header:1, defval:null, raw:false });
+  console.log('Hojas encontradas:', wb.SheetNames);
+  console.log('Hoja control:', ctrlName, '| Hoja gestiones:', gestName);
+  console.log('Filas control (primeras 3):', ctrlAOA.slice(0,3));
+  console.log('Fila 2 col 5 (exposicion):', ctrlAOA[1] && ctrlAOA[1][5]);
+  const gestAOA = gestName ? XLSX.utils.sheet_to_json(wb.Sheets[gestName], { header:1, defval:null, raw:false }) : [];
 
   // Skip header row (row 0)
   const ctrlRows = ctrlAOA.slice(1).filter(r => r && r.length > 5);
