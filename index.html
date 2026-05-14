@@ -8,13 +8,12 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
-:root {
+:root{
   --navy:#003B66;--navy-deep:#00264A;--navy-mid:#00507E;
   --blue-soft:#0A7EC2;--blue-light:#E6F1FB;
   --gray-50:#F8FAFC;--gray-100:#F1F5F9;--gray-200:#E2E8F0;
   --gray-400:#94A3B8;--gray-600:#475569;--gray-800:#1E293B;
-  --white:#FFFFFF;
-  --green:#10B981;--green-light:#D1FAE5;
+  --white:#FFFFFF;--green:#10B981;--green-light:#D1FAE5;
   --amber:#F59E0B;--amber-light:#FEF3C7;
   --red:#EF4444;--red-light:#FEE2E2;--red-dark:#991B1B;
   --sidebar-w:220px;
@@ -22,43 +21,25 @@
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'DM Sans',sans-serif;background:var(--gray-100);color:var(--gray-800);display:flex;min-height:100vh;font-size:14px}
 
-/* UPLOAD OVERLAY */
-#upload-screen{
-  position:fixed;inset:0;background:var(--navy-deep);
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  z-index:9999;transition:opacity 0.4s;
-}
+/* UPLOAD */
+#upload-screen{position:fixed;inset:0;background:var(--navy-deep);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;transition:opacity 0.4s}
 #upload-screen.hidden{opacity:0;pointer-events:none}
 .upload-logo{font-size:32px;font-weight:700;color:#fff;letter-spacing:-1px;margin-bottom:6px}
 .upload-logo span{color:#38BDF8}
 .upload-sub{font-size:12px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:2px;margin-bottom:48px}
-.drop-zone{
-  width:480px;border:2px dashed rgba(255,255,255,0.2);border-radius:16px;
-  padding:48px 40px;text-align:center;cursor:pointer;
-  transition:all 0.2s;background:rgba(255,255,255,0.04);
-}
-.drop-zone:hover,.drop-zone.drag-over{
-  border-color:#38BDF8;background:rgba(56,189,248,0.06);
-}
+.drop-zone{width:480px;border:2px dashed rgba(255,255,255,0.2);border-radius:16px;padding:48px 40px;text-align:center;cursor:pointer;transition:all 0.2s;background:rgba(255,255,255,0.04)}
+.drop-zone:hover,.drop-zone.drag-over{border-color:#38BDF8;background:rgba(56,189,248,0.06)}
 .drop-icon{font-size:48px;margin-bottom:16px;opacity:0.6}
 .drop-title{font-size:18px;font-weight:600;color:#fff;margin-bottom:8px}
 .drop-desc{font-size:13px;color:rgba(255,255,255,0.45);line-height:1.6}
 .drop-desc strong{color:#38BDF8}
-.drop-btn{
-  margin-top:20px;background:#38BDF8;color:var(--navy-deep);
-  border:none;border-radius:8px;padding:10px 24px;
-  font-size:13px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;
-  transition:background 0.15s;
-}
+.drop-btn{margin-top:20px;background:#38BDF8;color:var(--navy-deep);border:none;border-radius:8px;padding:10px 24px;font-size:13px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif}
 .drop-btn:hover{background:#7DD3FC}
 #file-input{display:none}
 .upload-note{margin-top:24px;font-size:11px;color:rgba(255,255,255,0.25);text-align:center}
-.progress-bar{
-  width:480px;height:4px;background:rgba(255,255,255,0.1);
-  border-radius:2px;margin-top:24px;overflow:hidden;display:none;
-}
+.progress-bar{width:480px;height:4px;background:rgba(255,255,255,0.1);border-radius:2px;margin-top:24px;overflow:hidden;display:none}
 .progress-fill{height:100%;background:#38BDF8;width:0%;transition:width 0.3s;border-radius:2px}
-.error-msg{color:#F87171;font-size:12px;margin-top:12px;display:none}
+.error-msg{color:#F87171;font-size:12px;margin-top:12px;display:none;max-width:480px;text-align:center}
 
 /* SIDEBAR */
 .sidebar{width:var(--sidebar-w);background:var(--navy-deep);position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;z-index:100}
@@ -75,7 +56,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--gray-100);color:var(--gra
 .last-update{font-size:10px;color:rgba(255,255,255,0.3);font-family:'DM Mono',monospace}
 .status-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--green);margin-right:5px;animation:pulse 2s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
-.btn-reload{width:100%;margin-top:10px;background:rgba(56,189,248,0.15);color:#38BDF8;border:1px solid rgba(56,189,248,0.3);border-radius:6px;padding:7px;font-size:11px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.15s}
+.btn-reload{width:100%;margin-top:10px;background:rgba(56,189,248,0.15);color:#38BDF8;border:1px solid rgba(56,189,248,0.3);border-radius:6px;padding:7px;font-size:11px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif}
 .btn-reload:hover{background:rgba(56,189,248,0.25)}
 
 /* MAIN */
@@ -86,90 +67,60 @@ body{font-family:'DM Sans',sans-serif;background:var(--gray-100);color:var(--gra
 .topbar-right{display:flex;align-items:center;gap:12px}
 .filter-bar{display:flex;gap:8px;align-items:center}
 .filter-select{border:1px solid var(--gray-200);border-radius:8px;padding:6px 10px;font-size:12px;font-family:'DM Sans',sans-serif;color:var(--gray-600);background:var(--gray-50);cursor:pointer;outline:none}
-.filter-select:focus{border-color:var(--blue-soft)}
 .btn-filter{background:var(--navy);color:#fff;border:none;border-radius:8px;padding:6px 14px;font-size:12px;font-family:'DM Sans',sans-serif;font-weight:600;cursor:pointer}
-.btn-filter:hover{background:var(--navy-mid)}
 .content{padding:24px 28px;flex:1}
 .section{display:none}
 .section.active{display:block}
-
-/* SECTION HEADER */
 .section-header{margin-bottom:20px}
 .section-title{font-size:18px;font-weight:700;color:var(--navy);letter-spacing:-0.3px}
 .section-desc{font-size:12px;color:var(--gray-400);margin-top:3px}
-
-/* GRIDS */
 .grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:16px}
 .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:16px}
 .grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:16px}
 .grid-2-1{display:grid;grid-template-columns:2fr 1fr;gap:14px;margin-bottom:16px}
-
-/* KPI */
-.kpi-card{background:var(--white);border-radius:12px;padding:18px 20px;border:1px solid var(--gray-200);position:relative;overflow:hidden;transition:box-shadow 0.2s}
-.kpi-card:hover{box-shadow:0 4px 20px rgba(0,59,102,0.08)}
+.kpi-card{background:var(--white);border-radius:12px;padding:18px 20px;border:1px solid var(--gray-200);position:relative;overflow:hidden}
 .kpi-label{font-size:11px;text-transform:uppercase;letter-spacing:0.8px;color:var(--gray-400);font-weight:600;margin-bottom:8px}
 .kpi-value{font-size:26px;font-weight:700;color:var(--navy);letter-spacing:-1px;line-height:1}
 .kpi-value.danger{color:var(--red-dark)}
 .kpi-value.warning{color:#D97706}
 .kpi-value.success{color:#065F46}
 .kpi-sub{font-size:11px;color:var(--gray-400);margin-top:6px}
-.kpi-badge{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:600;padding:2px 7px;border-radius:20px;margin-top:6px}
+.kpi-badge{display:inline-flex;align-items:center;font-size:11px;font-weight:600;padding:2px 7px;border-radius:20px;margin-top:6px}
 .kpi-badge.up{background:var(--red-light);color:var(--red-dark)}
-.kpi-badge.down{background:var(--green-light);color:#065F46}
 .kpi-badge.neutral{background:var(--blue-light);color:var(--navy)}
 .kpi-accent{position:absolute;top:0;right:0;width:4px;height:100%;border-radius:0 12px 12px 0}
 .accent-danger{background:var(--red)}
 .accent-warning{background:var(--amber)}
 .accent-success{background:var(--green)}
 .accent-navy{background:var(--navy)}
-
-/* CHART CARD */
 .chart-card{background:var(--white);border-radius:12px;padding:20px;border:1px solid var(--gray-200);margin-bottom:16px}
 .chart-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px}
 .chart-title{font-size:13px;font-weight:700;color:var(--navy)}
 .chart-subtitle{font-size:11px;color:var(--gray-400);margin-top:2px}
-
-/* TABLES */
-.tramo-table{width:100%;border-collapse:collapse}
-.tramo-table th{font-size:10px;text-transform:uppercase;letter-spacing:0.8px;color:var(--gray-400);font-weight:600;padding:8px 12px;text-align:left;border-bottom:1px solid var(--gray-200)}
-.tramo-table td{padding:10px 12px;font-size:13px;border-bottom:1px solid var(--gray-100)}
-.tramo-table tr:last-child td{border-bottom:none}
-.tramo-table tr:hover td{background:var(--gray-50)}
-.rank-table{width:100%;border-collapse:collapse}
-.rank-table th{font-size:10px;text-transform:uppercase;letter-spacing:0.8px;color:var(--gray-400);font-weight:600;padding:8px 12px;text-align:left;border-bottom:1px solid var(--gray-200)}
-.rank-table td{padding:9px 12px;font-size:12px;border-bottom:1px solid var(--gray-100);vertical-align:middle}
-.rank-table tr:last-child td{border-bottom:none}
-.rank-table tr:hover td{background:var(--gray-50)}
-
-/* BADGES */
-.tramo-pill{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;padding:3px 10px;border-radius:20px}
-.semaforo{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px}
+.tramo-table,.rank-table{width:100%;border-collapse:collapse}
+.tramo-table th,.rank-table th{font-size:10px;text-transform:uppercase;letter-spacing:0.8px;color:var(--gray-400);font-weight:600;padding:8px 12px;text-align:left;border-bottom:1px solid var(--gray-200)}
+.tramo-table td,.rank-table td{padding:9px 12px;font-size:12px;border-bottom:1px solid var(--gray-100);vertical-align:middle}
+.tramo-table tr:hover td,.rank-table tr:hover td{background:var(--gray-50)}
+.tramo-pill{display:inline-flex;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px}
+.semaforo{display:inline-flex;font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px}
 .sem-red{background:var(--red-light);color:var(--red-dark)}
 .sem-amber{background:var(--amber-light);color:#92400E}
 .sem-green{background:var(--green-light);color:#065F46}
-
-/* BAR MINI */
 .bar-mini{height:6px;border-radius:3px;background:var(--gray-200);overflow:hidden;width:100px}
 .bar-mini-fill{height:100%;border-radius:3px}
-
-/* FUNNEL */
-.funnel{display:flex;flex-direction:column;gap:6px}
+.funnel{display:flex;flex-direction:column;gap:8px}
 .funnel-step{display:flex;align-items:center;gap:12px}
-.funnel-bar-wrap{flex:1;height:32px;background:var(--gray-100);border-radius:6px;overflow:hidden}
-.funnel-bar-fill{height:100%;border-radius:6px;display:flex;align-items:center;padding-left:12px;font-size:12px;font-weight:600;color:#fff}
-.funnel-label{font-size:11px;color:var(--gray-600);width:130px;text-align:right;font-weight:500}
-.funnel-count{font-size:12px;font-weight:700;color:var(--navy);width:40px;text-align:right}
-
-/* ALERT */
-.alert-card{background:var(--white);border-radius:12px;padding:16px;border:1px solid var(--gray-200);border-left:4px solid;margin-bottom:0}
+.funnel-bar-wrap{flex:1;height:30px;background:var(--gray-100);border-radius:6px;overflow:hidden}
+.funnel-bar-fill{height:100%;border-radius:6px;display:flex;align-items:center;padding-left:10px;font-size:12px;font-weight:600;color:#fff}
+.funnel-label{font-size:11px;color:var(--gray-600);width:140px;text-align:right;font-weight:500}
+.funnel-count{font-size:12px;font-weight:700;color:var(--navy);width:36px;text-align:right}
+.alert-card{background:var(--white);border-radius:12px;padding:16px;border:1px solid var(--gray-200);border-left:4px solid}
 .alert-card.critical{border-left-color:var(--red)}
 .alert-card.warning{border-left-color:var(--amber)}
 .alert-card.info{border-left-color:var(--blue-soft)}
-.alert-title{font-size:12px;font-weight:700;color:var(--gray-800);margin-bottom:6px}
-.alert-value{font-size:24px;font-weight:700;color:var(--navy)}
+.alert-title{font-size:12px;font-weight:700;margin-bottom:6px}
+.alert-value{font-size:22px;font-weight:700;color:var(--navy)}
 .alert-desc{font-size:11px;color:var(--gray-400);margin-top:4px}
-
-/* INSIGHT */
 .insight-box{background:linear-gradient(135deg,var(--navy-deep),var(--navy-mid));border-radius:12px;padding:20px;color:#fff;margin-bottom:16px}
 .insight-header{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:rgba(255,255,255,0.5);font-weight:600;margin-bottom:14px}
 .insight-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
@@ -177,58 +128,38 @@ body{font-family:'DM Sans',sans-serif;background:var(--gray-100);color:var(--gra
 .insight-item-icon{font-size:16px;margin-bottom:6px}
 .insight-item-text{font-size:12px;color:rgba(255,255,255,0.85);line-height:1.5}
 .insight-item-text strong{color:#38BDF8}
-
-@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-.section.active>*{animation:fadeUp 0.35s ease both}
-.section.active>*:nth-child(2){animation-delay:0.05s}
-.section.active>*:nth-child(3){animation-delay:0.10s}
-.section.active>*:nth-child(4){animation-delay:0.15s}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.section.active>*{animation:fadeUp 0.3s ease both}
 ::-webkit-scrollbar{width:6px}
 ::-webkit-scrollbar-thumb{background:var(--gray-200);border-radius:3px}
 </style>
 </head>
 <body>
 
-<!-- ══════════════════════ UPLOAD SCREEN ══════════════════════ -->
+<!-- UPLOAD SCREEN -->
 <div id="upload-screen">
   <div class="upload-logo">C<span>ESSIO</span></div>
   <div class="upload-sub">Factoring · Dashboard Ejecutivo</div>
-
   <div class="drop-zone" id="drop-zone"
-       ondragover="handleDragOver(event)"
-       ondragleave="handleDragLeave(event)"
-       ondrop="handleDrop(event)">
+       ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)">
     <div class="drop-icon">📊</div>
     <div class="drop-title">Arrastra tu archivo Excel aquí</div>
     <div class="drop-desc">
       Suelta el archivo <strong>A-AR-F-01_Matriz_Gestion_Cobranza.xlsx</strong><br>
       o cualquier versión actualizada del mismo.<br><br>
-      El dashboard leerá automáticamente las hojas<br>
-      <strong>Control_Operación</strong> y <strong>Base_Gestiones</strong>
+      Hojas requeridas: <strong>Control_Operación</strong> y <strong>Base_Gestiones</strong>
     </div>
-    <button class="drop-btn" onclick="document.getElementById('file-input').click()">
-      📁 Seleccionar archivo
-    </button>
+    <button class="drop-btn" onclick="document.getElementById('file-input').click()">📁 Seleccionar archivo</button>
     <input type="file" id="file-input" accept=".xlsx,.xls" onchange="handleFileInput(event)">
   </div>
-
-  <div class="progress-bar" id="progress-bar">
-    <div class="progress-fill" id="progress-fill"></div>
-  </div>
+  <div class="progress-bar" id="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
   <div class="error-msg" id="error-msg"></div>
-
-  <div class="upload-note">
-    El archivo se procesa localmente en tu navegador.<br>
-    Ningún dato se envía a servidores externos.
-  </div>
+  <div class="upload-note">El archivo se procesa localmente · Ningún dato sale de tu navegador</div>
 </div>
 
-<!-- ══════════════════════ SIDEBAR ══════════════════════ -->
+<!-- SIDEBAR -->
 <nav class="sidebar">
-  <div class="sidebar-logo">
-    <div class="logo-mark">C<span>ESSIO</span></div>
-    <div class="logo-sub">Factoring · Dashboard</div>
-  </div>
+  <div class="sidebar-logo"><div class="logo-mark">C<span>ESSIO</span></div><div class="logo-sub">Factoring · Dashboard</div></div>
   <div class="sidebar-label">Módulos</div>
   <div class="nav-item active" onclick="showSection('resumen',this)"><span class="nav-icon">◈</span> Resumen Ejecutivo</div>
   <div class="nav-item" onclick="showSection('segmentacion',this)"><span class="nav-icon">◫</span> Segmentación</div>
@@ -237,29 +168,26 @@ body{font-family:'DM Sans',sans-serif;background:var(--gray-100);color:var(--gra
   <div class="nav-item" onclick="showSection('efectividad',this)"><span class="nav-icon">◈</span> Efectividad</div>
   <div class="nav-item" onclick="showSection('insights',this)"><span class="nav-icon">✦</span> Insights</div>
   <div class="sidebar-footer">
-    <div class="last-update"><span class="status-dot"></span><span id="update-date">Sin datos</span></div>
-    <div class="last-update" style="margin-top:4px;font-size:10px" id="file-name-display">Arrastra el Excel para cargar</div>
+    <div class="last-update"><span class="status-dot"></span><span id="update-date">Sin datos cargados</span></div>
+    <div class="last-update" style="margin-top:4px;font-size:9px;word-break:break-all" id="file-name-display">—</div>
     <button class="btn-reload" onclick="reloadFile()">↺ Cargar nuevo Excel</button>
   </div>
 </nav>
 
-<!-- ══════════════════════ MAIN ══════════════════════ -->
+<!-- MAIN -->
 <div class="main">
   <div class="topbar">
     <div>
       <div class="topbar-title" id="topbar-title">Resumen Ejecutivo</div>
-      <div class="topbar-subtitle" id="topbar-sub">Cargando datos...</div>
+      <div class="topbar-subtitle" id="topbar-sub">Arrastra el Excel para cargar datos</div>
     </div>
     <div class="topbar-right">
       <div class="filter-bar">
         <select class="filter-select" id="filter-tramo" onchange="applyFilters()">
           <option value="">Todos los tramos</option>
-          <option>Preventivo</option>
-          <option>Vencida 1-30</option>
-          <option>Vencida 31-60</option>
-          <option>Vencida 61-90</option>
-          <option>Vencida 91-120</option>
-          <option>Vencida &gt;120</option>
+          <option>Preventivo</option><option>Vencida 1-30</option>
+          <option>Vencida 31-60</option><option>Vencida 61-90</option>
+          <option>Vencida 91-120</option><option>Vencida &gt;120</option>
         </select>
         <select class="filter-select" id="filter-prioridad" onchange="applyFilters()">
           <option value="">Toda prioridad</option>
@@ -274,136 +202,69 @@ body{font-family:'DM Sans',sans-serif;background:var(--gray-100);color:var(--gra
 
     <!-- RESUMEN -->
     <div id="sec-resumen" class="section active">
-      <div class="section-header">
-        <div class="section-title">Resumen Ejecutivo</div>
-        <div class="section-desc" id="desc-resumen">—</div>
-      </div>
+      <div class="section-header"><div class="section-title">Resumen Ejecutivo</div><div class="section-desc" id="desc-resumen">Carga el Excel para ver los datos</div></div>
       <div class="grid-4" id="kpi-row1"></div>
       <div class="grid-4" id="kpi-row2"></div>
       <div class="grid-2">
-        <div class="chart-card">
-          <div class="chart-header"><div><div class="chart-title">Distribución por tramo</div><div class="chart-subtitle">% de exposición activa</div></div></div>
-          <div style="height:220px"><canvas id="chartDonut"></canvas></div>
-        </div>
-        <div class="chart-card">
-          <div class="chart-header"><div><div class="chart-title">Exposición por prioridad</div><div class="chart-subtitle">$ por nivel de urgencia</div></div></div>
-          <div style="height:220px"><canvas id="chartPrioridad"></canvas></div>
-        </div>
+        <div class="chart-card"><div class="chart-header"><div><div class="chart-title">Distribución por tramo</div><div class="chart-subtitle">% de exposición activa</div></div></div><div style="height:220px"><canvas id="chartDonut"></canvas></div></div>
+        <div class="chart-card"><div class="chart-header"><div><div class="chart-title">Exposición por prioridad</div></div></div><div style="height:220px"><canvas id="chartPrioridad"></canvas></div></div>
       </div>
     </div>
 
     <!-- SEGMENTACIÓN -->
     <div id="sec-segmentacion" class="section">
-      <div class="section-header">
-        <div class="section-title">Segmentación por Tramos</div>
-        <div class="section-desc">Análisis detallado por antigüedad de vencimiento</div>
-      </div>
+      <div class="section-header"><div class="section-title">Segmentación por Tramos</div></div>
       <div class="grid-2">
-        <div class="chart-card">
-          <div class="chart-header"><div><div class="chart-title">Exposición por tramo</div><div class="chart-subtitle">Valor total en cada tramo</div></div></div>
-          <div style="height:260px"><canvas id="chartBarTramo"></canvas></div>
-        </div>
-        <div class="chart-card">
-          <div class="chart-header"><div><div class="chart-title">Operaciones y clientes</div><div class="chart-subtitle">Por tramo de vencimiento</div></div></div>
-          <div style="height:260px"><canvas id="chartOpsClientes"></canvas></div>
-        </div>
+        <div class="chart-card"><div class="chart-header"><div><div class="chart-title">Exposición por tramo ($)</div></div></div><div style="height:260px"><canvas id="chartBarTramo"></canvas></div></div>
+        <div class="chart-card"><div class="chart-header"><div><div class="chart-title">Operaciones y clientes</div></div></div><div style="height:260px"><canvas id="chartOpsClientes"></canvas></div></div>
       </div>
-      <div class="chart-card">
-        <div class="chart-header"><div><div class="chart-title">Detalle por tramo</div></div></div>
-        <table class="tramo-table"><thead><tr><th>Tramo</th><th>Prioridad</th><th>Ops</th><th>Clientes</th><th>Exposición</th><th>%</th><th>Peso</th></tr></thead>
-        <tbody id="tramo-tbody"></tbody></table>
+      <div class="chart-card"><div class="chart-header"><div><div class="chart-title">Detalle por tramo</div></div></div>
+        <table class="tramo-table"><thead><tr><th>Tramo</th><th>Prioridad</th><th>Ops</th><th>Clientes</th><th>Exposición</th><th>%</th><th>Peso</th></tr></thead><tbody id="tramo-tbody"></tbody></table>
       </div>
-      <div class="chart-card">
-        <div class="chart-header"><div><div class="chart-title">Treemap de exposición</div></div></div>
-        <div id="treemap" style="display:grid;grid-template-columns:repeat(6,1fr);gap:6px;padding:4px"></div>
-      </div>
+      <div class="chart-card"><div class="chart-header"><div><div class="chart-title">Treemap de exposición</div></div></div><div id="treemap" style="display:grid;grid-template-columns:repeat(6,1fr);gap:6px;padding:4px"></div></div>
     </div>
 
     <!-- GESTIONES -->
     <div id="sec-gestiones" class="section">
-      <div class="section-header">
-        <div class="section-title">Gestiones de Cobranza</div>
-        <div class="section-desc">Actividad y cobertura de contacto con clientes</div>
-      </div>
+      <div class="section-header"><div class="section-title">Gestiones de Cobranza</div></div>
       <div class="grid-3" id="gest-kpis"></div>
       <div class="grid-2-1">
-        <div class="chart-card">
-          <div class="chart-header"><div><div class="chart-title">Funnel de gestión</div></div></div>
-          <div id="funnel-container" class="funnel" style="padding:10px 0"></div>
-        </div>
-        <div class="chart-card">
-          <div class="chart-header"><div><div class="chart-title">Canal de gestión</div></div></div>
-          <div style="height:200px"><canvas id="chartCanal"></canvas></div>
-        </div>
+        <div class="chart-card"><div class="chart-header"><div><div class="chart-title">Funnel de gestión</div></div></div><div id="funnel-container" class="funnel" style="padding:10px 0"></div></div>
+        <div class="chart-card"><div class="chart-header"><div><div class="chart-title">Canal de gestión</div></div></div><div style="height:200px"><canvas id="chartCanal"></canvas></div></div>
       </div>
-      <div class="chart-card">
-        <div class="chart-header"><div><div class="chart-title">Ranking clientes críticos</div><div class="chart-subtitle">Por exposición y días vencidos</div></div></div>
-        <table class="rank-table"><thead><tr><th>#</th><th>Cliente</th><th>Tramo</th><th>Exposición</th><th>Días</th><th>Prioridad</th><th>Judicial</th></tr></thead>
-        <tbody id="ranking-tbody"></tbody></table>
+      <div class="chart-card"><div class="chart-header"><div><div class="chart-title">Ranking clientes críticos</div><div class="chart-subtitle">Por exposición y días vencidos</div></div></div>
+        <table class="rank-table"><thead><tr><th>#</th><th>Cliente</th><th>Tramo</th><th>Exposición</th><th>Días</th><th>Prioridad</th><th>Judicial</th></tr></thead><tbody id="ranking-tbody"></tbody></table>
       </div>
     </div>
 
     <!-- ALERTAS -->
     <div id="sec-alertas" class="section">
-      <div class="section-header">
-        <div class="section-title">Alertas Gerenciales</div>
-        <div class="section-desc">Semáforo de criticidad y riesgo</div>
-      </div>
+      <div class="section-header"><div class="section-title">Alertas Gerenciales</div></div>
       <div class="grid-3" id="alert-cards"></div>
       <div class="grid-2" style="margin-top:16px">
-        <div class="chart-card">
-          <div class="chart-header"><div><div class="chart-title">Semáforo de cartera</div></div></div>
-          <div style="height:220px"><canvas id="chartSemaforo"></canvas></div>
-        </div>
-        <div class="chart-card">
-          <div class="chart-header"><div><div class="chart-title">Matriz de urgencia</div></div></div>
-          <div id="urgencia-matrix" style="padding:8px"></div>
-        </div>
+        <div class="chart-card"><div class="chart-header"><div><div class="chart-title">Semáforo de cartera</div></div></div><div style="height:220px"><canvas id="chartSemaforo"></canvas></div></div>
+        <div class="chart-card"><div class="chart-header"><div><div class="chart-title">Matriz de urgencia</div></div></div><div id="urgencia-matrix" style="padding:8px"></div></div>
       </div>
     </div>
 
     <!-- EFECTIVIDAD -->
     <div id="sec-efectividad" class="section">
-      <div class="section-header">
-        <div class="section-title">Efectividad de Cobranza</div>
-        <div class="section-desc">Análisis por canal y tramo</div>
-      </div>
+      <div class="section-header"><div class="section-title">Efectividad de Cobranza</div></div>
       <div class="grid-3" id="efect-kpis"></div>
       <div class="grid-2">
-        <div class="chart-card">
-          <div class="chart-header"><div><div class="chart-title">Gestiones por canal</div></div></div>
-          <div style="height:220px"><canvas id="chartEfectividad"></canvas></div>
-        </div>
-        <div class="chart-card">
-          <div class="chart-header"><div><div class="chart-title">Gestiones por tramo</div></div></div>
-          <div style="height:220px"><canvas id="chartGestionesTramo"></canvas></div>
-        </div>
+        <div class="chart-card"><div class="chart-header"><div><div class="chart-title">Gestiones por canal</div></div></div><div style="height:220px"><canvas id="chartEfectividad"></canvas></div></div>
+        <div class="chart-card"><div class="chart-header"><div><div class="chart-title">Gestiones por tramo</div></div></div><div style="height:220px"><canvas id="chartGestionesTramo"></canvas></div></div>
       </div>
-      <div class="chart-card">
-        <div class="chart-header"><div><div class="chart-title">Clientes con mayor frecuencia de gestión</div></div></div>
-        <div id="freq-bars" style="padding:8px 0"></div>
-      </div>
+      <div class="chart-card"><div class="chart-header"><div><div class="chart-title">Clientes con mayor frecuencia de gestión</div></div></div><div id="freq-bars" style="padding:8px 0"></div></div>
     </div>
 
     <!-- INSIGHTS -->
     <div id="sec-insights" class="section">
-      <div class="section-header">
-        <div class="section-title">Insights Gerenciales</div>
-        <div class="section-desc">Análisis automático basado en los datos del Excel cargado</div>
-      </div>
-      <div class="insight-box">
-        <div class="insight-header">✦ Análisis ejecutivo automático</div>
-        <div class="insight-grid" id="insights-grid"></div>
-      </div>
+      <div class="section-header"><div class="section-title">Insights Gerenciales</div><div class="section-desc">Análisis automático basado en los datos del Excel</div></div>
+      <div class="insight-box"><div class="insight-header">✦ Análisis ejecutivo automático</div><div class="insight-grid" id="insights-grid"></div></div>
       <div class="grid-2">
-        <div class="chart-card">
-          <div class="chart-header"><div><div class="chart-title">Recomendaciones prioritarias</div></div></div>
-          <div id="recomendaciones"></div>
-        </div>
-        <div class="chart-card">
-          <div class="chart-header"><div><div class="chart-title">Radar de brechas</div><div class="chart-subtitle">Estado actual vs objetivo</div></div></div>
-          <div style="height:220px"><canvas id="chartRadar"></canvas></div>
-        </div>
+        <div class="chart-card"><div class="chart-header"><div><div class="chart-title">Recomendaciones prioritarias</div></div></div><div id="recomendaciones"></div></div>
+        <div class="chart-card"><div class="chart-header"><div><div class="chart-title">Radar de brechas</div><div class="chart-subtitle">Estado actual vs objetivo</div></div></div><div style="height:220px"><canvas id="chartRadar"></canvas></div></div>
       </div>
     </div>
 
@@ -411,476 +272,445 @@ body{font-family:'DM Sans',sans-serif;background:var(--gray-100);color:var(--gra
 </div>
 
 <script>
-// ══════════════════════════════════════════════
-// GLOBAL STATE
-// ══════════════════════════════════════════════
-let CHARTS = {};
-let DATA = null;
+// ═══════════════════════════════════
+// CONSTANTS
+// ═══════════════════════════════════
 const TRAMO_ORDER = ['Preventivo','Vencida 1-30','Vencida 31-60','Vencida 61-90','Vencida 91-120','Vencida >120'];
 const COLORS = ['#0EA5E9','#22C55E','#F59E0B','#F97316','#EF4444','#991B1B'];
+let CHARTS = {};
+let DATA = null;
+
 Chart.defaults.font.family = "'DM Sans', sans-serif";
 Chart.defaults.font.size = 11;
 Chart.defaults.color = '#94A3B8';
 
-// ══════════════════════════════════════════════
-// DRAG & DROP
-// ══════════════════════════════════════════════
-function handleDragOver(e) {
-  e.preventDefault();
-  document.getElementById('drop-zone').classList.add('drag-over');
-}
-function handleDragLeave(e) {
-  document.getElementById('drop-zone').classList.remove('drag-over');
-}
-function handleDrop(e) {
-  e.preventDefault();
-  document.getElementById('drop-zone').classList.remove('drag-over');
-  const file = e.dataTransfer.files[0];
-  if (file) processFile(file);
-}
-function handleFileInput(e) {
-  const file = e.target.files[0];
-  if (file) processFile(file);
-}
-function reloadFile() {
-  document.getElementById('upload-screen').classList.remove('hidden');
-  document.getElementById('file-input').value = '';
-  document.getElementById('error-msg').style.display = 'none';
-}
+// ═══════════════════════════════════
+// COLUMN INDICES (0-based)
+// Control_Operación:
+//  0=NoOperacion, 1=RazonSocial, 2=Gestor, 3=RUC,
+//  4=Estado, 5=Exposicion, 6=GestionesRealizadas,
+//  7=PromesasIncumplidas, 8=UltimaFechaPromesa,
+//  9=DiasMaxVcto, 10=DiasMinVencer, 11=Tramo,
+//  12=Prioridad, 13=ElegibleJudic
+// Base_Gestiones:
+//  0=NoOperacion, 1=RazonSocial, 2=RUC,
+//  3=Exposicion, 4=FechaGestion, 5=TipoGestion,
+//  6=Resultado, 7=FechaPromesa, 8=CumplioPromesa,
+//  9=MontoPagado, 10=Comentario, 11=Responsable, 12=Tramo
+// ═══════════════════════════════════
 
-// ══════════════════════════════════════════════
-// PROCESS EXCEL
-// ══════════════════════════════════════════════
-function processFile(file) {
+// ═══════════════════════════════════
+// DRAG & DROP
+// ═══════════════════════════════════
+function handleDragOver(e){ e.preventDefault(); document.getElementById('drop-zone').classList.add('drag-over'); }
+function handleDragLeave(){ document.getElementById('drop-zone').classList.remove('drag-over'); }
+function handleDrop(e){ e.preventDefault(); document.getElementById('drop-zone').classList.remove('drag-over'); const f=e.dataTransfer.files[0]; if(f) processFile(f); }
+function handleFileInput(e){ const f=e.target.files[0]; if(f) processFile(f); }
+function reloadFile(){ document.getElementById('upload-screen').classList.remove('hidden'); document.getElementById('file-input').value=''; document.getElementById('error-msg').style.display='none'; document.getElementById('progress-bar').style.display='none'; document.getElementById('progress-fill').style.width='0%'; }
+
+// ═══════════════════════════════════
+// PROCESS FILE
+// ═══════════════════════════════════
+function processFile(file){
   const errEl = document.getElementById('error-msg');
   errEl.style.display = 'none';
-
-  if (!file.name.match(/\.(xlsx|xls)$/i)) {
+  if(!file.name.match(/\.(xlsx|xls)$/i)){
     errEl.textContent = '❌ Por favor sube un archivo Excel (.xlsx o .xls)';
-    errEl.style.display = 'block';
-    return;
+    errEl.style.display = 'block'; return;
   }
-
   const pb = document.getElementById('progress-bar');
   const pf = document.getElementById('progress-fill');
-  pb.style.display = 'block';
-  pf.style.width = '20%';
+  pb.style.display = 'block'; pf.style.width = '20%';
 
   const reader = new FileReader();
-  reader.onload = function(e) {
+  reader.onload = function(e){
     try {
       pf.style.width = '60%';
       const wb = XLSX.read(e.target.result, { type:'array', cellDates:true });
       pf.style.width = '80%';
       parseWorkbook(wb, file.name);
       pf.style.width = '100%';
-      setTimeout(() => {
+      setTimeout(()=>{
         document.getElementById('upload-screen').classList.add('hidden');
         document.getElementById('file-name-display').textContent = file.name;
         document.getElementById('update-date').textContent = new Date().toLocaleDateString('es-EC');
       }, 300);
-    } catch(err) {
-      errEl.textContent = '❌ Error al leer el archivo: ' + err.message;
+    } catch(err){
+      errEl.textContent = '❌ Error: ' + err.message;
       errEl.style.display = 'block';
       pb.style.display = 'none';
+      console.error(err);
     }
   };
   reader.readAsArrayBuffer(file);
 }
 
-// ══════════════════════════════════════════════
-// PARSE WORKBOOK
-// ══════════════════════════════════════════════
-function parseWorkbook(wb, fileName) {
-  // Find sheets (flexible naming)
+// ═══════════════════════════════════
+// PARSE — reads by column INDEX
+// ═══════════════════════════════════
+function parseWorkbook(wb, fileName){
   const sheetNames = wb.SheetNames;
-  const ctrlSheet = sheetNames.find(s => s.includes('Control') || s.includes('control'));
-  const gestSheet = sheetNames.find(s => s.includes('Gestiones') || s.includes('gestiones') || s.includes('Base_Gestiones'));
 
-  if (!ctrlSheet) throw new Error('No se encontró la hoja Control_Operación');
+  // Find sheets flexibly
+  const ctrlName = sheetNames.find(s => s.replace(/[^a-zA-Z]/g,'').toLowerCase().includes('control'));
+  const gestName = sheetNames.find(s => s.replace(/[^a-zA-Z]/g,'').toLowerCase().includes('gestion') || s.replace(/[^a-zA-Z]/g,'').toLowerCase().includes('gestiones'));
 
-  const ctrlRows = XLSX.utils.sheet_to_json(wb.Sheets[ctrlSheet], { defval:'' });
-  const gestRows = gestSheet ? XLSX.utils.sheet_to_json(wb.Sheets[gestSheet], { defval:'' }) : [];
+  if(!ctrlName) throw new Error('No se encontró la hoja Control_Operación. Hojas disponibles: ' + sheetNames.join(', '));
 
-  // ── CONTROL DATA ──
+  // Read as array of arrays (not objects) — avoids encoding issues with column names
+  const ctrlAOA = XLSX.utils.sheet_to_json(wb.Sheets[ctrlName], { header:1, defval:null, raw:true });
+  const gestAOA = gestName ? XLSX.utils.sheet_to_json(wb.Sheets[gestName], { header:1, defval:null, raw:true }) : [];
+
+  // Skip header row (row 0)
+  const ctrlRows = ctrlAOA.slice(1).filter(r => r && r.length > 5);
+  const gestRows = gestAOA.slice(1).filter(r => r && r.length > 4);
+
+  // ── CONTROL: parse rows by index ──
+  // col 5 = Exposición Total
+  // col 9 = Días máximos vencimiento
+  // col 11 = Tramo
+  // col 12 = Prioridad
+  // col 13 = Elegible judicialización
+
   const active = ctrlRows.filter(r => {
-    const exp = parseFloat(r['Exposición Total'] || r['Exposicion Total'] || 0);
+    const exp = parseFloat(r[5]) || 0;
     return exp > 0;
   });
 
   // Tramo stats
-  const tramoStats = {};
-  TRAMO_ORDER.forEach(t => tramoStats[t] = { ops:0, clients:new Set(), exp:0 });
+  const tramoMap = {};
+  TRAMO_ORDER.forEach(t => tramoMap[t] = { ops:0, clients:new Set(), exp:0 });
 
   active.forEach(r => {
-    const t = r['Tramo'] || '';
-    if (tramoStats[t]) {
-      tramoStats[t].ops++;
-      tramoStats[t].clients.add(r['Razón Social cliente'] || r['Razon Social cliente'] || '');
-      tramoStats[t].exp += parseFloat(r['Exposición Total'] || 0);
+    const t = String(r[11] || '').trim();
+    const name = String(r[1] || '').trim();
+    const exp = parseFloat(r[5]) || 0;
+    if(tramoMap[t]){
+      tramoMap[t].ops++;
+      tramoMap[t].clients.add(name);
+      tramoMap[t].exp += exp;
     }
   });
 
-  const totalExp = Object.values(tramoStats).reduce((s,v) => s+v.exp, 0);
-  const tramos = TRAMO_ORDER.map((name,i) => ({
-    name,
-    ops: tramoStats[name].ops,
-    clients: tramoStats[name].clients.size,
-    exp: tramoStats[name].exp,
-    pct: totalExp ? +(tramoStats[name].exp/totalExp*100).toFixed(1) : 0,
-    color: COLORS[i],
-    prio: name.includes('>120') || name.includes('91-120') ? 'Alta' : name.includes('61') || name.includes('31') ? 'Media' : 'Baja'
+  const totalExp = Object.values(tramoMap).reduce((s,v)=>s+v.exp,0);
+  const tramos = TRAMO_ORDER.map((name,i)=>({
+    name, ops:tramoMap[name].ops, clients:tramoMap[name].clients.size,
+    exp:tramoMap[name].exp,
+    pct:totalExp ? +(tramoMap[name].exp/totalExp*100).toFixed(1) : 0,
+    color:COLORS[i],
+    prio: name.includes('>120')||name.includes('91-120') ? 'Alta' : name.includes('61')||name.includes('31') ? 'Media' : 'Baja'
   }));
 
   // Priority stats
   const prioStats = { Alta:{ops:0,exp:0}, Media:{ops:0,exp:0}, Baja:{ops:0,exp:0} };
   active.forEach(r => {
-    const p = r['Prioridad'] || '';
-    if (prioStats[p]) { prioStats[p].ops++; prioStats[p].exp += parseFloat(r['Exposición Total']||0); }
+    const p = String(r[12]||'').trim();
+    if(prioStats[p]){ prioStats[p].ops++; prioStats[p].exp += parseFloat(r[5])||0; }
   });
 
   // Judicial
-  const judicial = active.filter(r => r['Elegible para Judicialización'] === 'Si' || r['Elegible para Judicializacion'] === 'Si');
-  const judialExp = judicial.reduce((s,r) => s+parseFloat(r['Exposición Total']||0),0);
+  const judicial = active.filter(r => String(r[13]||'').trim().toLowerCase()==='si');
+  const judialExp = judicial.reduce((s,r)=>s+(parseFloat(r[5])||0),0);
 
   // Days
-  const dias = active.map(r => parseFloat(r['Días máximos de vencimiento']||r['Dias maximos de vencimiento']||0)).filter(d=>d>0);
+  const dias = active.map(r=>parseFloat(r[9])||0).filter(d=>d>0);
   const avgDias = dias.length ? Math.round(dias.reduce((a,b)=>a+b,0)/dias.length) : 0;
 
   // Clients
-  const allClients = new Set(active.map(r => r['Razón Social cliente']||''));
-  const vencidos = active.filter(r => r['Tramo'] && r['Tramo'] !== 'Preventivo');
-  const vencidosExp = vencidos.reduce((s,r)=>s+parseFloat(r['Exposición Total']||0),0);
-  const prevExp = tramoStats['Preventivo'].exp;
+  const allClients = new Set(active.map(r=>String(r[1]||'').trim()));
+  const prevExp = tramoMap['Preventivo'].exp;
+  const vencidosExp = totalExp - prevExp;
+  const vencidosOps = active.filter(r=>String(r[11]||'')!=='Preventivo').length;
 
   // Top clients
   const clientMap = {};
   active.forEach(r => {
-    const name = r['Razón Social cliente']||'';
-    const exp = parseFloat(r['Exposición Total']||0);
-    const dias2 = parseFloat(r['Días máximos de vencimiento']||0);
-    if (!clientMap[name]) clientMap[name] = { name, exp:0, dias:0, tramo:r['Tramo']||'', prio:r['Prioridad']||'', judic:r['Elegible para Judicialización']||'No' };
+    const name = String(r[1]||'').trim();
+    const exp = parseFloat(r[5])||0;
+    const d = parseFloat(r[9])||0;
+    if(!clientMap[name]) clientMap[name]={ name, exp:0, dias:0, tramo:String(r[11]||''), prio:String(r[12]||''), judic:String(r[13]||'No') };
     clientMap[name].exp += exp;
-    if (dias2 > clientMap[name].dias) { clientMap[name].dias = dias2; clientMap[name].tramo = r['Tramo']||''; }
+    if(d > clientMap[name].dias){ clientMap[name].dias=d; clientMap[name].tramo=String(r[11]||''); }
   });
   const topClients = Object.values(clientMap).sort((a,b)=>b.exp-a.exp).slice(0,10);
 
-  // ── GESTIONES DATA ──
+  // ── GESTIONES: parse by index ──
+  // col 0=NoOp, col 1=Cliente, col 5=TipoGestion, col 12=Tramo
+
   const tiposGestion = {};
   const gestByClient = {};
   const gestByTramo = {};
-  TRAMO_ORDER.forEach(t => gestByTramo[t] = 0);
+  TRAMO_ORDER.forEach(t => gestByTramo[t]=0);
 
   gestRows.forEach(r => {
-    const tipo = r['Tipo gestión'] || r['Tipo gestion'] || 'Otro';
-    tiposGestion[tipo] = (tiposGestion[tipo]||0) + 1;
-    const client = r['Razón Social cliente']||'';
-    gestByClient[client] = (gestByClient[client]||0) + 1;
-    const tramo = r['Tramo']||'';
-    if (gestByTramo[tramo] !== undefined) gestByTramo[tramo]++;
+    const tipo = String(r[5]||'Otro').trim();
+    const client = String(r[1]||'').trim();
+    const tramo = String(r[12]||'').trim();
+    tiposGestion[tipo] = (tiposGestion[tipo]||0)+1;
+    if(client) gestByClient[client] = (gestByClient[client]||0)+1;
+    if(gestByTramo[tramo]!==undefined) gestByTramo[tramo]++;
   });
 
-  const gestClientedClients = new Set(gestRows.map(r=>r['Razón Social cliente']||''));
-  const clientsWithGest = gestClientedClients.size;
+  const gestClients = new Set(gestRows.map(r=>String(r[1]||'').trim()).filter(Boolean));
   const totalGest = gestRows.length;
-
-  const freqClients = Object.entries(gestByClient)
-    .sort((a,b)=>b[1]-a[1]).slice(0,6)
-    .map(([name,count])=>({name,count}));
+  const freqClients = Object.entries(gestByClient).sort((a,b)=>b[1]-a[1]).slice(0,8).map(([n,c])=>({name:n,count:c}));
 
   DATA = {
     tramos, totalExp, prioStats, judicial, judialExp,
-    avgDias, allClients: allClients.size, vencidosExp, prevExp,
-    active, topClients, tiposGestion, gestByTramo,
-    clientsWithGest, totalGest, freqClients,
-    fileName, loadDate: new Date().toLocaleDateString('es-EC')
+    avgDias, allClients:allClients.size, vencidosExp, prevExp,
+    vencidosOps, active, topClients, tiposGestion, gestByTramo,
+    clientsWithGest:gestClients.size, totalGest, freqClients, fileName,
+    loadDate: new Date().toLocaleDateString('es-EC')
   };
 
   renderAll();
 }
 
-// ══════════════════════════════════════════════
-// RENDER ALL
-// ══════════════════════════════════════════════
-function renderAll() {
+// ═══════════════════════════════════
+// RENDER
+// ═══════════════════════════════════
+function renderAll(){
   destroyCharts();
-  renderKPIs();
+  renderResumen();
   renderSegmentacion();
   renderGestiones();
   renderAlertas();
   renderEfectividad();
   renderInsights();
-  updateTopbar();
+  document.getElementById('topbar-sub').textContent = DATA.fileName + ' — ' + DATA.loadDate;
+  document.getElementById('desc-resumen').textContent = DATA.active.length + ' operaciones activas — corte ' + DATA.loadDate;
 }
 
-function destroyCharts() {
-  Object.values(CHARTS).forEach(c => { try { c.destroy(); } catch(e){} });
-  CHARTS = {};
-}
+function destroyCharts(){ Object.values(CHARTS).forEach(c=>{try{c.destroy()}catch(e){}}); CHARTS={}; }
 
-function updateTopbar() {
-  document.getElementById('topbar-sub').textContent =
-    `Datos cargados: ${DATA.fileName} — ${DATA.loadDate}`;
-  document.getElementById('desc-resumen').textContent =
-    `${DATA.active.length} operaciones activas — corte ${DATA.loadDate}`;
-}
+// ── RESUMEN ──
+function renderResumen(){
+  const pctG = DATA.allClients>0 ? (DATA.clientsWithGest/DATA.allClients*100).toFixed(1) : '0.0';
 
-// ── KPIs ──
-function renderKPIs() {
-  const pctGest = DATA.allClients > 0 ? (DATA.clientsWithGest/DATA.allClients*100).toFixed(1) : 0;
-  const vencidosOps = DATA.active.filter(r=>r['Tramo']&&r['Tramo']!=='Preventivo').length;
+  document.getElementById('kpi-row1').innerHTML =
+    kpi('Cartera vencida','$'+fmt(DATA.vencidosExp),'danger','accent-danger',DATA.vencidosOps+' ops activas','up','Riesgo Alto') +
+    kpi('Cartera preventiva','$'+fmt(DATA.prevExp),'warning','accent-warning',DATA.tramos[0].ops+' operaciones','neutral','Preventivo') +
+    kpi('Exposición total','$'+fmt(DATA.totalExp),'','accent-navy','Cartera completa','neutral','Activa') +
+    kpi('Prom. días vencidos',DATA.avgDias+' días','danger','accent-danger','Operaciones activas','up','Crítico');
 
-  document.getElementById('kpi-row1').innerHTML = `
-    ${kpiCard('Cartera vencida total','$'+fmt(DATA.vencidosExp),'danger','accent-danger',vencidosOps+' operaciones activas','up','Riesgo Alto')}
-    ${kpiCard('Cartera preventiva','$'+fmt(DATA.prevExp),'warning','accent-warning',DATA.tramos[0].ops+' operaciones','neutral','Preventivo')}
-    ${kpiCard('Exposición total','$'+fmt(DATA.totalExp),'','accent-navy','Cartera completa','neutral','Activa')}
-    ${kpiCard('Prom. días vencidos',DATA.avgDias+' días','danger','accent-danger','Operaciones en gestión','up','Crítico')}
-  `;
-  document.getElementById('kpi-row2').innerHTML = `
-    ${kpiCard('Clientes activos',DATA.allClients,'','accent-navy','Con deuda en gestión','','')}
-    ${kpiCard('% cartera gestionada',pctGest+'%','warning','accent-warning',DATA.clientsWithGest+' de '+DATA.allClients+' clientes','up',''+(100-pctGest).toFixed(1)+'% sin gestión')}
-    ${kpiCard('Elegibles judicializ.',DATA.judicial.length+' ops','danger','accent-danger','$'+fmt(DATA.judialExp)+' en riesgo','up','Requieren decisión')}
-    ${kpiCard('Gestiones totales',DATA.totalGest,'','accent-navy',Object.keys(DATA.tiposGestion).length+' tipos de canal','','')}
-  `;
+  document.getElementById('kpi-row2').innerHTML =
+    kpi('Clientes activos',DATA.allClients,'','accent-navy','Con deuda en gestión','','') +
+    kpi('% cartera gestionada',pctG+'%','warning','accent-warning',DATA.clientsWithGest+' de '+DATA.allClients,'up',(100-parseFloat(pctG)).toFixed(1)+'% sin gestión') +
+    kpi('Elegibles judicializ.',DATA.judicial.length+' ops','danger','accent-danger','$'+fmt(DATA.judialExp)+' en riesgo','up','Requieren decisión') +
+    kpi('Gestiones totales',DATA.totalGest,'','accent-navy',Object.keys(DATA.tiposGestion).length+' canales','','');
 
-  CHARTS.donut = new Chart(document.getElementById('chartDonut'), {
-    type:'doughnut',
-    data:{ labels: DATA.tramos.map(t=>t.name), datasets:[{ data:DATA.tramos.map(t=>t.exp), backgroundColor:COLORS, borderWidth:2, borderColor:'#fff' }] },
-    options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ position:'right', labels:{ boxWidth:10, padding:10, font:{size:10} } }, tooltip:{ callbacks:{ label: ctx=>' $'+fmt(ctx.raw)+' ('+DATA.tramos[ctx.dataIndex].pct+'%)' } } }, cutout:'65%' }
-  });
-
-  CHARTS.prioridad = new Chart(document.getElementById('chartPrioridad'), {
-    type:'bar',
-    data:{ labels:['Alta','Media','Baja'], datasets:[{ label:'Exposición', data:[DATA.prioStats.Alta.exp,DATA.prioStats.Media.exp,DATA.prioStats.Baja.exp], backgroundColor:['#EF4444','#F59E0B','#22C55E'], borderRadius:6 }] },
-    options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ display:false } }, scales:{ y:{ grid:{ color:'#F1F5F9' }, ticks:{ callback:v=>'$'+(v/1000).toFixed(0)+'K' } }, x:{ grid:{ display:false } } } }
-  });
-}
-
-function kpiCard(label, value, valClass, accent, sub, badgeType, badgeText) {
-  const badge = badgeText ? `<div class="kpi-badge ${badgeType||'neutral'}">${badgeText}</div>` : '';
-  return `<div class="kpi-card"><div class="kpi-accent ${accent}"></div><div class="kpi-label">${label}</div><div class="kpi-value ${valClass||''}">${value}</div>${badge}<div class="kpi-sub">${sub}</div></div>`;
+  CHARTS.donut = mkChart('chartDonut','doughnut',
+    { labels:DATA.tramos.map(t=>t.name), datasets:[{data:DATA.tramos.map(t=>t.exp),backgroundColor:COLORS,borderWidth:2,borderColor:'#fff'}] },
+    { responsive:true,maintainAspectRatio:false,cutout:'65%',plugins:{ legend:{position:'right',labels:{boxWidth:10,padding:10,font:{size:10}}}, tooltip:{callbacks:{label:ctx=>' $'+fmt(ctx.raw)+' ('+DATA.tramos[ctx.dataIndex].pct+'%)'}} } }
+  );
+  CHARTS.prio = mkChart('chartPrioridad','bar',
+    { labels:['Alta','Media','Baja'], datasets:[{label:'Exposición',data:[DATA.prioStats.Alta.exp,DATA.prioStats.Media.exp,DATA.prioStats.Baja.exp],backgroundColor:['#EF4444','#F59E0B','#22C55E'],borderRadius:6}] },
+    { responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{grid:{color:'#F1F5F9'},ticks:{callback:v=>'$'+(v/1000).toFixed(0)+'K'}},x:{grid:{display:false}}} }
+  );
 }
 
 // ── SEGMENTACIÓN ──
-function renderSegmentacion() {
-  document.getElementById('tramo-tbody').innerHTML = DATA.tramos.map(t => {
-    const prio = t.prio==='Alta'?'<span class="semaforo sem-red">⬤ Alta</span>':t.prio==='Media'?'<span class="semaforo sem-amber">⬤ Media</span>':'<span class="semaforo sem-green">⬤ Baja</span>';
-    return `<tr><td><span class="tramo-pill" style="background:${t.color}20;color:${t.color}">${t.name}</span></td><td>${prio}</td><td><strong>${t.ops}</strong></td><td>${t.clients}</td><td><strong>$${fmt(t.exp)}</strong></td><td>${t.pct}%</td><td><div class="bar-mini"><div class="bar-mini-fill" style="width:${Math.min(t.pct*5,100)}%;background:${t.color}"></div></div></td></tr>`;
+function renderSegmentacion(){
+  document.getElementById('tramo-tbody').innerHTML = DATA.tramos.map(t=>{
+    const ps = t.prio==='Alta'?'<span class="semaforo sem-red">⬤ Alta</span>':t.prio==='Media'?'<span class="semaforo sem-amber">⬤ Media</span>':'<span class="semaforo sem-green">⬤ Baja</span>';
+    return `<tr><td><span class="tramo-pill" style="background:${t.color}20;color:${t.color}">${t.name}</span></td><td>${ps}</td><td><b>${t.ops}</b></td><td>${t.clients}</td><td><b>$${fmt(t.exp)}</b></td><td>${t.pct}%</td><td><div class="bar-mini"><div class="bar-mini-fill" style="width:${Math.min(t.pct*5,100)}%;background:${t.color}"></div></div></td></tr>`;
   }).join('');
 
-  const treemap = document.getElementById('treemap');
-  treemap.innerHTML = DATA.tramos.map(t => {
-    const cols = Math.max(1, Math.round(t.pct/100*6));
-    return `<div style="grid-column:span ${cols};background:${t.color};border-radius:8px;padding:12px;color:#fff;min-height:70px;display:flex;flex-direction:column;justify-content:space-between;cursor:pointer;transition:transform 0.15s" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'"><div style="font-size:10px;font-weight:600;opacity:0.85">${t.name}</div><div><div style="font-size:15px;font-weight:700">$${(t.exp/1000).toFixed(0)}K</div><div style="font-size:10px;opacity:0.8">${t.pct}% · ${t.ops} ops</div></div></div>`;
+  document.getElementById('treemap').innerHTML = DATA.tramos.map(t=>{
+    const cols = Math.max(1,Math.round(t.pct/100*6));
+    return `<div style="grid-column:span ${cols};background:${t.color};border-radius:8px;padding:12px;color:#fff;min-height:70px;display:flex;flex-direction:column;justify-content:space-between"><div style="font-size:10px;font-weight:600;opacity:0.85">${t.name}</div><div><div style="font-size:15px;font-weight:700">$${(t.exp/1000).toFixed(0)}K</div><div style="font-size:10px;opacity:0.8">${t.pct}% · ${t.ops} ops</div></div></div>`;
   }).join('');
 
-  CHARTS.barTramo = new Chart(document.getElementById('chartBarTramo'), {
-    type:'bar',
-    data:{ labels:DATA.tramos.map(t=>t.name), datasets:[{ label:'Exposición', data:DATA.tramos.map(t=>t.exp), backgroundColor:COLORS, borderRadius:6 }] },
-    options:{ responsive:true, maintainAspectRatio:false, indexAxis:'y', plugins:{ legend:{ display:false } }, scales:{ x:{ grid:{ color:'#F1F5F9' }, ticks:{ callback:v=>'$'+(v/1000).toFixed(0)+'K' } }, y:{ grid:{ display:false } } } }
-  });
-
-  CHARTS.opsClientes = new Chart(document.getElementById('chartOpsClientes'), {
-    type:'bar',
-    data:{ labels:DATA.tramos.map(t=>t.name), datasets:[ { label:'Operaciones', data:DATA.tramos.map(t=>t.ops), backgroundColor:COLORS, borderRadius:4 }, { label:'Clientes', data:DATA.tramos.map(t=>t.clients), backgroundColor:COLORS.map(c=>c+'80'), borderRadius:4 } ] },
-    options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ position:'top', labels:{ boxWidth:8, padding:10 } } }, scales:{ y:{ grid:{ color:'#F1F5F9' } }, x:{ grid:{ display:false }, ticks:{ maxRotation:30, font:{size:9} } } } }
-  });
+  CHARTS.barT = mkChart('chartBarTramo','bar',
+    { labels:DATA.tramos.map(t=>t.name), datasets:[{label:'Exposición',data:DATA.tramos.map(t=>t.exp),backgroundColor:COLORS,borderRadius:6}] },
+    { responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{grid:{color:'#F1F5F9'},ticks:{callback:v=>'$'+(v/1000).toFixed(0)+'K'}},y:{grid:{display:false}}} }
+  );
+  CHARTS.opsC = mkChart('chartOpsClientes','bar',
+    { labels:DATA.tramos.map(t=>t.name), datasets:[{label:'Operaciones',data:DATA.tramos.map(t=>t.ops),backgroundColor:COLORS,borderRadius:4},{label:'Clientes',data:DATA.tramos.map(t=>t.clients),backgroundColor:COLORS.map(c=>c+'80'),borderRadius:4}] },
+    { responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',labels:{boxWidth:8,padding:10}}},scales:{y:{grid:{color:'#F1F5F9'}},x:{grid:{display:false},ticks:{maxRotation:30,font:{size:9}}}} }
+  );
 }
 
 // ── GESTIONES ──
-function renderGestiones() {
-  const pctSin = DATA.allClients > 0 ? (100 - DATA.clientsWithGest/DATA.allClients*100).toFixed(1) : 0;
-  document.getElementById('gest-kpis').innerHTML = `
-    ${kpiCard('Total gestiones',DATA.totalGest,'','accent-navy','Registradas en Base_Gestiones','','')}
-    ${kpiCard('Clientes contactados',DATA.clientsWithGest,'','accent-navy','Con al menos 1 gestión','','')}
-    ${kpiCard('Sin gestión',DATA.allClients-DATA.clientsWithGest,'warning','accent-warning',pctSin+'% sin contacto','up','')}
-  `;
+function renderGestiones(){
+  const sinG = DATA.allClients - DATA.clientsWithGest;
+  const pctG = DATA.allClients>0?(100-DATA.clientsWithGest/DATA.allClients*100).toFixed(1):0;
 
-  const maxFunnel = DATA.allClients;
-  const funnelData = [
-    { label:'Clientes activos', count:DATA.allClients, pct:100, color:'var(--navy)' },
-    { label:'Con gestión iniciada', count:DATA.clientsWithGest, pct:DATA.allClients>0?DATA.clientsWithGest/DATA.allClients*100:0, color:'var(--blue-soft)' },
-    ...Object.entries(DATA.tiposGestion).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([tipo,cnt],i) => ({
-      label: tipo.length>20?tipo.slice(0,20)+'…':tipo, count:cnt, pct:maxFunnel>0?cnt/maxFunnel*100:0, color:['#0EA5E9','#F59E0B','#22C55E'][i]||'#94A3B8'
-    }))
-  ];
+  document.getElementById('gest-kpis').innerHTML =
+    kpi('Total gestiones',DATA.totalGest,'','accent-navy','En Base_Gestiones','','') +
+    kpi('Clientes contactados',DATA.clientsWithGest,'','accent-navy','Con al menos 1 gestión','','') +
+    kpi('Sin gestión',sinG,'warning','accent-warning',pctG+'% del total','up','');
 
-  document.getElementById('funnel-container').innerHTML = funnelData.map(f =>
-    `<div class="funnel-step"><div class="funnel-label">${f.label}</div><div class="funnel-bar-wrap"><div class="funnel-bar-fill" style="width:${Math.max(f.pct,3)}%;background:${f.color}">${f.count}</div></div><div class="funnel-count">${f.count}</div></div>`
-  ).join('');
+  const maxF = DATA.allClients||1;
+  document.getElementById('funnel-container').innerHTML = [
+    {label:'Clientes activos',count:DATA.allClients,pct:100,color:'var(--navy)'},
+    {label:'Con gestión iniciada',count:DATA.clientsWithGest,pct:DATA.allClients?DATA.clientsWithGest/DATA.allClients*100:0,color:'var(--blue-soft)'},
+    ...Object.entries(DATA.tiposGestion).sort((a,b)=>b[1]-a[1]).slice(0,4).map(([t,c],i)=>({label:t.length>22?t.slice(0,22)+'…':t,count:c,pct:maxF?c/maxF*100:0,color:['#0EA5E9','#F59E0B','#22C55E','#A855F7'][i]}))
+  ].map(f=>`<div class="funnel-step"><div class="funnel-label">${f.label}</div><div class="funnel-bar-wrap"><div class="funnel-bar-fill" style="width:${Math.max(f.pct,4)}%;background:${f.color}">${f.count}</div></div><div class="funnel-count">${f.count}</div></div>`).join('');
 
-  const canalLabels = Object.keys(DATA.tiposGestion);
-  const canalData = Object.values(DATA.tiposGestion);
-  CHARTS.canal = new Chart(document.getElementById('chartCanal'), {
-    type:'doughnut',
-    data:{ labels:canalLabels, datasets:[{ data:canalData, backgroundColor:['#003B66','#0EA5E9','#22C55E','#F59E0B','#EF4444'], borderWidth:2, borderColor:'#fff' }] },
-    options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ position:'bottom', labels:{ boxWidth:8, padding:8, font:{size:9} } } }, cutout:'60%' }
-  });
+  CHARTS.canal = mkChart('chartCanal','doughnut',
+    { labels:Object.keys(DATA.tiposGestion), datasets:[{data:Object.values(DATA.tiposGestion),backgroundColor:['#003B66','#0EA5E9','#22C55E','#F59E0B','#EF4444'],borderWidth:2,borderColor:'#fff'}] },
+    { responsive:true,maintainAspectRatio:false,cutout:'60%',plugins:{legend:{position:'bottom',labels:{boxWidth:8,padding:8,font:{size:9}}}} }
+  );
 
-  document.getElementById('ranking-tbody').innerHTML = DATA.topClients.map((c,i) => {
-    const ps = c.prio==='Alta'?'<span class="semaforo sem-red">⬤ Alta</span>':'<span class="semaforo sem-amber">⬤ Media</span>';
-    const js = c.judic==='Si'?'<span class="semaforo sem-red">Sí</span>':'<span class="semaforo sem-green">No</span>';
-    const ds = c.dias>90?`<span style="color:var(--red-dark);font-weight:700">${c.dias}</span>`:c.dias>30?`<span style="color:#D97706;font-weight:700">${c.dias}</span>`:`<span style="color:#065F46;font-weight:700">${c.dias}</span>`;
-    return `<tr><td><strong style="color:var(--gray-400)">${i+1}</strong></td><td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600" title="${c.name}">${c.name}</td><td><span class="tramo-pill" style="background:#E6F1FB;color:var(--navy);font-size:10px">${c.tramo}</span></td><td><strong>$${fmt(c.exp)}</strong></td><td>${ds}</td><td>${ps}</td><td>${js}</td></tr>`;
+  document.getElementById('ranking-tbody').innerHTML = DATA.topClients.map((c,i)=>{
+    const ps=c.prio==='Alta'?'<span class="semaforo sem-red">⬤ Alta</span>':'<span class="semaforo sem-amber">⬤ Media</span>';
+    const js=c.judic.toLowerCase()==='si'?'<span class="semaforo sem-red">Sí</span>':'<span class="semaforo sem-green">No</span>';
+    const ds=c.dias>90?`<span style="color:var(--red-dark);font-weight:700">${c.dias}</span>`:c.dias>30?`<span style="color:#D97706;font-weight:700">${c.dias}</span>`:`<span style="color:#065F46;font-weight:700">${c.dias}</span>`;
+    return `<tr><td><b style="color:var(--gray-400)">${i+1}</b></td><td style="max-width:170px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600" title="${c.name}">${c.name}</td><td><span class="tramo-pill" style="background:#E6F1FB;color:var(--navy)">${c.tramo}</span></td><td><b>$${fmt(c.exp)}</b></td><td>${ds}</td><td>${ps}</td><td>${js}</td></tr>`;
   }).join('');
 }
 
 // ── ALERTAS ──
-function renderAlertas() {
-  const criticos = DATA.active.filter(r=>parseFloat(r['Días máximos de vencimiento']||0)>90).length;
-  const criticosExp = DATA.active.filter(r=>parseFloat(r['Días máximos de vencimiento']||0)>90).reduce((s,r)=>s+parseFloat(r['Exposición Total']||0),0);
+function renderAlertas(){
+  const crit = DATA.active.filter(r=>(parseFloat(r[9])||0)>90);
+  const critExp = crit.reduce((s,r)=>s+(parseFloat(r[5])||0),0);
 
-  document.getElementById('alert-cards').innerHTML = `
-    <div class="alert-card critical"><div class="alert-title">🔴 Clientes >90 días sin pago</div><div class="alert-value">${criticos} ops</div><div class="alert-desc">$${fmt(criticosExp)} en riesgo — Acción inmediata</div></div>
-    <div class="alert-card critical"><div class="alert-title">🔴 Elegibles judicialización</div><div class="alert-value">${DATA.judicial.length} ops</div><div class="alert-desc">$${fmt(DATA.judialExp)} — Decisión gerencial requerida</div></div>
-    <div class="alert-card warning"><div class="alert-title">🟡 Sin gestión registrada</div><div class="alert-value">${DATA.allClients - DATA.clientsWithGest} clientes</div><div class="alert-desc">${((DATA.allClients-DATA.clientsWithGest)/DATA.allClients*100).toFixed(1)}% del total sin ningún contacto</div></div>
-    <div class="alert-card warning"><div class="alert-title">🟡 Prioridad Alta</div><div class="alert-value">${DATA.prioStats.Alta.ops} ops</div><div class="alert-desc">$${fmt(DATA.prioStats.Alta.exp)} — Requieren acción urgente</div></div>
-    <div class="alert-card info"><div class="alert-title">🔵 Cartera preventiva</div><div class="alert-value">${DATA.tramos[0].ops} ops</div><div class="alert-desc">$${fmt(DATA.prevExp)} — Ventana proactiva</div></div>
-    <div class="alert-card warning"><div class="alert-title">🟡 Promedio días vencidos</div><div class="alert-value">${DATA.avgDias} días</div><div class="alert-desc">Antigüedad severa de la cartera</div></div>
-  `;
+  document.getElementById('alert-cards').innerHTML =
+    `<div class="alert-card critical"><div class="alert-title">🔴 Clientes >90 días</div><div class="alert-value">${crit.length} ops</div><div class="alert-desc">$${fmt(critExp)} — Acción inmediata</div></div>` +
+    `<div class="alert-card critical"><div class="alert-title">🔴 Elegibles judicializ.</div><div class="alert-value">${DATA.judicial.length} ops</div><div class="alert-desc">$${fmt(DATA.judialExp)} — Decisión requerida</div></div>` +
+    `<div class="alert-card warning"><div class="alert-title">🟡 Sin gestión</div><div class="alert-value">${DATA.allClients-DATA.clientsWithGest} clientes</div><div class="alert-desc">${DATA.allClients>0?((DATA.allClients-DATA.clientsWithGest)/DATA.allClients*100).toFixed(1):0}% sin ningún contacto</div></div>` +
+    `<div class="alert-card warning"><div class="alert-title">🟡 Prioridad Alta</div><div class="alert-value">${DATA.prioStats.Alta.ops} ops</div><div class="alert-desc">$${fmt(DATA.prioStats.Alta.exp)} urgentes</div></div>` +
+    `<div class="alert-card info"><div class="alert-title">🔵 Cartera preventiva</div><div class="alert-value">${DATA.tramos[0].ops} ops</div><div class="alert-desc">$${fmt(DATA.prevExp)} — Ventana proactiva</div></div>` +
+    `<div class="alert-card warning"><div class="alert-title">🟡 Prom. días vencidos</div><div class="alert-value">${DATA.avgDias} días</div><div class="alert-desc">Antigüedad severa de cartera</div></div>`;
 
-  const critOps = DATA.active.filter(r=>parseFloat(r['Días máximos de vencimiento']||0)>90).length;
-  const medOps  = DATA.active.filter(r=>{const d=parseFloat(r['Días máximos de vencimiento']||0);return d>30&&d<=90;}).length;
-  const lowOps  = DATA.active.filter(r=>{const d=parseFloat(r['Días máximos de vencimiento']||0);return d>0&&d<=30;}).length;
+  const critOps = DATA.active.filter(r=>(parseFloat(r[9])||0)>90).length;
+  const medOps  = DATA.active.filter(r=>{const d=parseFloat(r[9])||0;return d>30&&d<=90;}).length;
+  const lowOps  = DATA.active.filter(r=>{const d=parseFloat(r[9])||0;return d>0&&d<=30;}).length;
 
-  CHARTS.semaforo = new Chart(document.getElementById('chartSemaforo'), {
-    type:'pie',
-    data:{ labels:['🔴 Crítico (>90d)','🟡 Alerta (31-90d)','🟢 Temprano (1-30d)','🔵 Preventivo'], datasets:[{ data:[critOps,medOps,lowOps,DATA.tramos[0].ops], backgroundColor:['#EF4444','#F59E0B','#22C55E','#0EA5E9'], borderWidth:2, borderColor:'#fff' }] },
-    options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ position:'right', labels:{ boxWidth:10, padding:10, font:{size:10} } } } }
-  });
+  CHARTS.sem = mkChart('chartSemaforo','pie',
+    { labels:['🔴 Crítico (>90d)','🟡 Alerta (31-90d)','🟢 Temprano (1-30d)','🔵 Preventivo'], datasets:[{data:[critOps,medOps,lowOps,DATA.tramos[0].ops],backgroundColor:['#EF4444','#F59E0B','#22C55E','#0EA5E9'],borderWidth:2,borderColor:'#fff'}] },
+    { responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{boxWidth:10,padding:8,font:{size:10}}}} }
+  );
 
-  const critExp  = DATA.active.filter(r=>parseFloat(r['Días máximos de vencimiento']||0)>90).reduce((s,r)=>s+parseFloat(r['Exposición Total']||0),0);
-  const medExp   = DATA.active.filter(r=>{const d=parseFloat(r['Días máximos de vencimiento']||0);return d>30&&d<=90;}).reduce((s,r)=>s+parseFloat(r['Exposición Total']||0),0);
-  const lowExp   = DATA.active.filter(r=>{const d=parseFloat(r['Días máximos de vencimiento']||0);return d>0&&d<=30;}).reduce((s,r)=>s+parseFloat(r['Exposición Total']||0),0);
+  const critExpU = DATA.active.filter(r=>(parseFloat(r[9])||0)>90).reduce((s,r)=>s+(parseFloat(r[5])||0),0);
+  const medExpU  = DATA.active.filter(r=>{const d=parseFloat(r[9])||0;return d>30&&d<=90;}).reduce((s,r)=>s+(parseFloat(r[5])||0),0);
+  const lowExpU  = DATA.active.filter(r=>{const d=parseFloat(r[9])||0;return d>0&&d<=30;}).reduce((s,r)=>s+(parseFloat(r[5])||0),0);
 
-  document.getElementById('urgencia-matrix').innerHTML = `
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px">
-      <div style="background:var(--red-light);border-radius:8px;padding:14px;text-align:center;border:1px solid #FCA5A5"><div style="font-size:22px;font-weight:700;color:var(--red-dark)">${critOps}</div><div style="font-size:10px;color:var(--red-dark);font-weight:600;margin-top:4px">CRÍTICO<br>>90 días</div><div style="font-size:10px;color:var(--red-dark);margin-top:2px">$${(critExp/1000).toFixed(0)}K</div></div>
-      <div style="background:var(--amber-light);border-radius:8px;padding:14px;text-align:center;border:1px solid #FCD34D"><div style="font-size:22px;font-weight:700;color:#92400E">${medOps}</div><div style="font-size:10px;color:#92400E;font-weight:600;margin-top:4px">ALERTA<br>31-90 días</div><div style="font-size:10px;color:#92400E;margin-top:2px">$${(medExp/1000).toFixed(0)}K</div></div>
-      <div style="background:var(--green-light);border-radius:8px;padding:14px;text-align:center;border:1px solid #6EE7B7"><div style="font-size:22px;font-weight:700;color:#065F46">${lowOps}</div><div style="font-size:10px;color:#065F46;font-weight:600;margin-top:4px">TEMPRANO<br>1-30 días</div><div style="font-size:10px;color:#065F46;margin-top:2px">$${(lowExp/1000).toFixed(0)}K</div></div>
+  document.getElementById('urgencia-matrix').innerHTML =
+    `<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+      <div style="background:var(--red-light);border-radius:8px;padding:12px;text-align:center;border:1px solid #FCA5A5"><div style="font-size:22px;font-weight:700;color:var(--red-dark)">${critOps}</div><div style="font-size:10px;color:var(--red-dark);font-weight:600;margin-top:4px">CRÍTICO<br>>90 días</div><div style="font-size:10px;color:var(--red-dark);margin-top:2px">$${(critExpU/1000).toFixed(0)}K</div></div>
+      <div style="background:var(--amber-light);border-radius:8px;padding:12px;text-align:center;border:1px solid #FCD34D"><div style="font-size:22px;font-weight:700;color:#92400E">${medOps}</div><div style="font-size:10px;color:#92400E;font-weight:600;margin-top:4px">ALERTA<br>31-90 días</div><div style="font-size:10px;color:#92400E;margin-top:2px">$${(medExpU/1000).toFixed(0)}K</div></div>
+      <div style="background:var(--green-light);border-radius:8px;padding:12px;text-align:center;border:1px solid #6EE7B7"><div style="font-size:22px;font-weight:700;color:#065F46">${lowOps}</div><div style="font-size:10px;color:#065F46;font-weight:600;margin-top:4px">TEMPRANO<br>1-30 días</div><div style="font-size:10px;color:#065F46;margin-top:2px">$${(lowExpU/1000).toFixed(0)}K</div></div>
     </div>
-    <div style="margin-top:12px;background:var(--blue-light);border-radius:8px;padding:12px;border:1px solid #BAE6FD">
+    <div style="margin-top:10px;background:var(--blue-light);border-radius:8px;padding:12px;border:1px solid #BAE6FD">
       <div style="font-size:11px;color:var(--navy);font-weight:600">⚠ Acción recomendada</div>
-      <div style="font-size:11px;color:var(--gray-600);margin-top:4px;line-height:1.6">
-        • Judicializar ${DATA.judicial.length} operaciones elegibles ($${(DATA.judialExp/1000).toFixed(0)}K)<br>
-        • Contactar ${DATA.allClients-DATA.clientsWithGest} clientes sin gestión esta semana<br>
-        • Monitorear ${DATA.tramos[0].ops} preventivos antes del vencimiento
-      </div>
+      <div style="font-size:11px;color:var(--gray-600);margin-top:4px;line-height:1.6">• Judicializar ${DATA.judicial.length} ops ($${(DATA.judialExp/1000).toFixed(0)}K)<br>• Contactar ${DATA.allClients-DATA.clientsWithGest} clientes sin gestión<br>• Monitorear ${DATA.tramos[0].ops} preventivos</div>
     </div>`;
 }
 
 // ── EFECTIVIDAD ──
-function renderEfectividad() {
-  const topCanal = Object.entries(DATA.tiposGestion).sort((a,b)=>b[1]-a[1])[0];
-  const pctGest = DATA.allClients > 0 ? (DATA.clientsWithGest/DATA.allClients*100).toFixed(1) : 0;
+function renderEfectividad(){
+  const topC = Object.entries(DATA.tiposGestion).sort((a,b)=>b[1]-a[1])[0]||['—',0];
+  const pctG = DATA.allClients>0?(DATA.clientsWithGest/DATA.allClients*100).toFixed(1):0;
 
-  document.getElementById('efect-kpis').innerHTML = `
-    ${kpiCard('Gestiones totales',DATA.totalGest,'','accent-navy',Object.keys(DATA.tiposGestion).length+' canales activos','','')}
-    ${kpiCard('Canal más activo',topCanal?topCanal[0].slice(0,20):'—','success','accent-success',topCanal?topCanal[1]+' gestiones':'—','','')}
-    ${kpiCard('Tasa contacto',pctGest+'%','warning','accent-warning','Clientes respondidos / total','','')}
-  `;
+  document.getElementById('efect-kpis').innerHTML =
+    kpi('Gestiones totales',DATA.totalGest,'','accent-navy',Object.keys(DATA.tiposGestion).length+' canales','','') +
+    kpi('Canal más activo',topC[0].length>20?topC[0].slice(0,20)+'…':topC[0],'success','accent-success',topC[1]+' gestiones','','') +
+    kpi('Tasa contacto',pctG+'%','warning','accent-warning','Clientes respondidos / total','','');
 
-  const cLabels = Object.keys(DATA.tiposGestion);
-  const cData   = Object.values(DATA.tiposGestion);
-  CHARTS.efectividad = new Chart(document.getElementById('chartEfectividad'), {
-    type:'bar',
-    data:{ labels:cLabels, datasets:[{ label:'Gestiones', data:cData, backgroundColor:['#003B66','#0EA5E9','#22C55E','#F59E0B','#EF4444'], borderRadius:6 }] },
-    options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ display:false } }, scales:{ y:{ grid:{ color:'#F1F5F9' } }, x:{ grid:{ display:false }, ticks:{ font:{size:9}, maxRotation:35 } } } }
-  });
-
-  CHARTS.gestTramo = new Chart(document.getElementById('chartGestionesTramo'), {
-    type:'bar',
-    data:{ labels:TRAMO_ORDER, datasets:[{ label:'Gestiones', data:TRAMO_ORDER.map(t=>DATA.gestByTramo[t]||0), backgroundColor:COLORS, borderRadius:6 }] },
-    options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ display:false } }, scales:{ y:{ grid:{ color:'#F1F5F9' } }, x:{ grid:{ display:false }, ticks:{ maxRotation:35, font:{size:9} } } } }
-  });
+  CHARTS.efect = mkChart('chartEfectividad','bar',
+    { labels:Object.keys(DATA.tiposGestion), datasets:[{label:'Gestiones',data:Object.values(DATA.tiposGestion),backgroundColor:['#003B66','#0EA5E9','#22C55E','#F59E0B','#EF4444'],borderRadius:6}] },
+    { responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{grid:{color:'#F1F5F9'}},x:{grid:{display:false},ticks:{font:{size:9},maxRotation:35}}} }
+  );
+  CHARTS.gestT = mkChart('chartGestionesTramo','bar',
+    { labels:TRAMO_ORDER, datasets:[{label:'Gestiones',data:TRAMO_ORDER.map(t=>DATA.gestByTramo[t]||0),backgroundColor:COLORS,borderRadius:6}] },
+    { responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{grid:{color:'#F1F5F9'}},x:{grid:{display:false},ticks:{maxRotation:35,font:{size:9}}}} }
+  );
 
   const maxFreq = Math.max(...DATA.freqClients.map(c=>c.count),1);
-  document.getElementById('freq-bars').innerHTML = DATA.freqClients.map(c =>
-    `<div style="display:flex;align-items:center;gap:12px;margin-bottom:10px"><div style="width:200px;font-size:12px;color:var(--gray-600);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${c.name}">${c.name}</div><div style="flex:1;height:22px;background:var(--gray-100);border-radius:4px;overflow:hidden"><div style="width:${c.count/maxFreq*100}%;height:100%;background:var(--navy);border-radius:4px;display:flex;align-items:center;padding-left:8px;font-size:11px;font-weight:600;color:#fff">${c.count} gestiones</div></div></div>`
+  document.getElementById('freq-bars').innerHTML = DATA.freqClients.map(c=>
+    `<div style="display:flex;align-items:center;gap:12px;margin-bottom:10px"><div style="width:180px;font-size:12px;color:var(--gray-600);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${c.name}">${c.name}</div><div style="flex:1;height:22px;background:var(--gray-100);border-radius:4px;overflow:hidden"><div style="width:${c.count/maxFreq*100}%;height:100%;background:var(--navy);border-radius:4px;display:flex;align-items:center;padding-left:8px;font-size:11px;font-weight:600;color:#fff">${c.count}</div></div></div>`
   ).join('');
 }
 
 // ── INSIGHTS ──
-function renderInsights() {
-  const pctCrit = DATA.totalExp > 0 ? (DATA.vencidosExp/DATA.totalExp*100).toFixed(1) : 0;
-  const pctGest = DATA.allClients > 0 ? (DATA.clientsWithGest/DATA.allClients*100).toFixed(1) : 0;
-  const topCanal = Object.entries(DATA.tiposGestion).sort((a,b)=>b[1]-a[1])[0];
-  const sinGest  = DATA.allClients - DATA.clientsWithGest;
-  const topClient = DATA.topClients[0];
-  const topTramoExp = DATA.tramos.sort((a,b)=>b.exp-a.exp)[0];
-  const multiGest = DATA.freqClients.filter(c=>c.count>=3).length;
+function renderInsights(){
+  const pctCrit = DATA.totalExp>0?(DATA.vencidosExp/DATA.totalExp*100).toFixed(1):0;
+  const pctG    = DATA.allClients>0?(DATA.clientsWithGest/DATA.allClients*100).toFixed(1):0;
+  const topC    = Object.entries(DATA.tiposGestion).sort((a,b)=>b[1]-a[1])[0]||['—',0];
+  const sinG    = DATA.allClients - DATA.clientsWithGest;
+  const topTr   = [...DATA.tramos].sort((a,b)=>b.exp-a.exp)[0]||{name:'—',exp:0,pct:0};
+  const topCl   = DATA.topClients[0]||{name:'—',exp:0,tramo:''};
+  const multiG  = DATA.freqClients.filter(c=>c.count>=3).length;
 
   document.getElementById('insights-grid').innerHTML = [
-    { icon:'📊', text:`El <strong>${pctCrit}%</strong> de la exposición total está en cartera vencida — $${fmt(DATA.vencidosExp)} en riesgo activo.` },
-    { icon:'📧', text:`El canal más utilizado es <strong>${topCanal?topCanal[0]:'—'}</strong> con <strong>${topCanal?topCanal[1]:0}</strong> gestiones (${topCanal?(topCanal[1]/DATA.totalGest*100).toFixed(1):0}%).` },
-    { icon:'⚠️', text:`<strong>${multiGest}</strong> clientes tienen 3 o más gestiones sin resolución — posible resistencia estructural al pago.` },
-    { icon:'⚖️', text:`<strong>${DATA.judicial.length}</strong> operaciones elegibles para judicialización con exposición de <strong>$${fmt(DATA.judialExp)}</strong>.` },
-    { icon:'🎯', text:`<strong>${sinGest}</strong> clientes activos (${(100-parseFloat(pctGest)).toFixed(1)}%) no tienen ninguna gestión registrada.` },
-    { icon:'📈', text:`El tramo de mayor exposición es <strong>${topTramoExp.name}</strong> con $${fmt(topTramoExp.exp)} (${topTramoExp.pct}% del total).` },
-    { icon:'🏆', text:topClient?`El cliente de mayor exposición es <strong>${topClient.name}</strong> con <strong>$${fmt(topClient.exp)}</strong> en ${topClient.tramo}.`:'Sin datos de clientes.' },
-    { icon:'🔴', text:`Promedio de <strong>${DATA.avgDias} días</strong> de vencimiento indica antigüedad severa — se requiere estrategia agresiva de recuperación.` },
+    {icon:'📊',text:`El <strong>${pctCrit}%</strong> de la exposición total está en cartera vencida — $${fmt(DATA.vencidosExp)} en riesgo activo.`},
+    {icon:'📧',text:`El canal más utilizado es <strong>${topC[0]}</strong> con <strong>${topC[1]}</strong> gestiones (${DATA.totalGest>0?(topC[1]/DATA.totalGest*100).toFixed(1):0}%).`},
+    {icon:'⚠️',text:`<strong>${multiG}</strong> clientes con 3+ gestiones sin resolución — posible resistencia estructural al pago.`},
+    {icon:'⚖️',text:`<strong>${DATA.judicial.length}</strong> operaciones elegibles para judicialización con exposición de <strong>$${fmt(DATA.judialExp)}</strong>.`},
+    {icon:'🎯',text:`<strong>${sinG}</strong> clientes (${(100-parseFloat(pctG)).toFixed(1)}%) sin ninguna gestión registrada.`},
+    {icon:'📈',text:`El tramo de mayor exposición es <strong>${topTr.name}</strong> con $${fmt(topTr.exp)} (${topTr.pct}% del total).`},
+    {icon:'🏆',text:`Mayor exposición: <strong>${topCl.name}</strong> — <strong>$${fmt(topCl.exp)}</strong> en ${topCl.tramo}.`},
+    {icon:'🔴',text:`Promedio de <strong>${DATA.avgDias} días</strong> de vencimiento — antigüedad severa, se requiere estrategia agresiva.`},
   ].map(i=>`<div class="insight-item"><div class="insight-item-icon">${i.icon}</div><div class="insight-item-text">${i.text}</div></div>`).join('');
 
   document.getElementById('recomendaciones').innerHTML = [
-    { icon:'⚖️', color:'var(--red)', title:'Iniciar judicialización', desc:`${DATA.judicial.length} operaciones elegibles por $${fmt(DATA.judialExp)} requieren escalamiento inmediato.` },
-    { icon:'📋', color:'var(--red)', title:'Plan de contacto masivo', desc:`${sinGest} clientes sin gestión. Implementar campaña de contacto esta semana.` },
-    { icon:'📞', color:'var(--amber)', title:'Diversificar canales', desc:`Solo ${Object.keys(DATA.tiposGestion).length} canales activos. Sumar WhatsApp y visitas para casos >90 días.` },
-    { icon:'🎯', color:'var(--amber)', title:'Foco en preventivos', desc:`$${fmt(DATA.prevExp)} en preventivos. Actuar antes del vencimiento para reducir mora futura.` },
-    { icon:'📊', color:'var(--blue-soft)', title:'KPI semanal a gerencia', desc:'Reportar variación de exposición crítica y avance de gestión cada semana.' },
-  ].map(r=>`<div style="display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--gray-100);align-items:flex-start"><div style="width:32px;height:32px;border-radius:8px;background:${r.color}20;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">${r.icon}</div><div><div style="font-size:12px;font-weight:700;color:var(--navy)">${r.title}</div><div style="font-size:11px;color:var(--gray-400);margin-top:2px">${r.desc}</div></div></div>`).join('');
+    {icon:'⚖️',color:'var(--red)',title:'Iniciar judicialización',desc:`${DATA.judicial.length} operaciones por $${fmt(DATA.judialExp)} requieren escalamiento.`},
+    {icon:'📋',color:'var(--red)',title:'Plan de contacto masivo',desc:`${sinG} clientes sin gestión. Implementar campaña urgente.`},
+    {icon:'📞',color:'var(--amber)',title:'Diversificar canales',desc:`Solo ${Object.keys(DATA.tiposGestion).length} canales activos. Sumar WhatsApp y visitas.`},
+    {icon:'🎯',color:'var(--amber)',title:'Foco en preventivos',desc:`$${fmt(DATA.prevExp)} por vencer. Actuar antes del vencimiento.`},
+    {icon:'📊',color:'var(--blue-soft)',title:'Reporte semanal a gerencia',desc:'Variación de exposición crítica y avance de gestión.'},
+  ].map(r=>`<div style="display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--gray-100)"><div style="width:32px;height:32px;border-radius:8px;background:${r.color}20;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">${r.icon}</div><div><div style="font-size:12px;font-weight:700;color:var(--navy)">${r.title}</div><div style="font-size:11px;color:var(--gray-400);margin-top:2px">${r.desc}</div></div></div>`).join('');
 
-  const pctJudic = DATA.totalExp>0 ? DATA.judialExp/DATA.totalExp*100 : 0;
-  CHARTS.radar = new Chart(document.getElementById('chartRadar'), {
-    type:'radar',
-    data:{
-      labels:['Cobertura gestión','Exposición critica','Cartera preventiva','% gestionado','Riesgo judicial','Diversif. canales'],
+  const pJudic = DATA.totalExp>0?DATA.judialExp/DATA.totalExp*100:0;
+  CHARTS.radar = mkChart('chartRadar','radar',
+    { labels:['Cobertura gestión','Exposición sana','Cartera preventiva','% gestionado','Riesgo judicial','Diversif. canales'],
       datasets:[
-        { label:'Estado actual', data:[parseFloat(pctGest),100-pctCrit,100-DATA.tramos[0].pct*5,parseFloat(pctGest),100-pctJudic,Object.keys(DATA.tiposGestion).length*20], backgroundColor:'rgba(0,59,102,0.15)', borderColor:'#003B66', pointBackgroundColor:'#003B66', pointRadius:4, borderWidth:2 },
-        { label:'Objetivo', data:[80,70,80,80,70,80], backgroundColor:'rgba(16,185,129,0.1)', borderColor:'#10B981', pointBackgroundColor:'#10B981', pointRadius:4, borderWidth:2, borderDash:[4,4] }
-      ]
-    },
-    options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ position:'bottom', labels:{ boxWidth:8, padding:10, font:{size:10} } } }, scales:{ r:{ min:0,max:100, grid:{ color:'#E2E8F0' }, pointLabels:{ font:{size:9}, color:'#475569' }, ticks:{ display:false } } } }
-  });
+        {label:'Estado actual',data:[parseFloat(pctG),100-parseFloat(pctCrit),100-DATA.tramos[0].pct*5,parseFloat(pctG),100-pJudic,Object.keys(DATA.tiposGestion).length*20],backgroundColor:'rgba(0,59,102,0.15)',borderColor:'#003B66',pointBackgroundColor:'#003B66',pointRadius:4,borderWidth:2},
+        {label:'Objetivo',data:[80,70,80,80,70,80],backgroundColor:'rgba(16,185,129,0.1)',borderColor:'#10B981',pointBackgroundColor:'#10B981',pointRadius:4,borderWidth:2,borderDash:[4,4]}
+      ] },
+    { responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{boxWidth:8,padding:10,font:{size:10}}}},scales:{r:{min:0,max:100,grid:{color:'#E2E8F0'},pointLabels:{font:{size:9},color:'#475569'},ticks:{display:false}}} }
+  );
 }
 
-// ══════════════════════════════════════════════
-// FILTERS & NAV
-// ══════════════════════════════════════════════
-const sectionTitles = { resumen:'Resumen Ejecutivo', segmentacion:'Segmentación por Tramos', gestiones:'Gestiones de Cobranza', alertas:'Alertas Gerenciales', efectividad:'Efectividad de Cobranza', insights:'Insights Gerenciales' };
+// ═══════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════
+function mkChart(id, type, data, options){
+  return new Chart(document.getElementById(id), {type, data, options});
+}
 
-function showSection(id, el) {
+function kpi(label, value, valClass, accent, sub, badgeType, badgeText){
+  const badge = badgeText ? `<div class="kpi-badge ${badgeType||'neutral'}">${badgeText}</div>` : '';
+  return `<div class="kpi-card"><div class="kpi-accent ${accent}"></div><div class="kpi-label">${label}</div><div class="kpi-value ${valClass||''}">${value}</div>${badge}<div class="kpi-sub">${sub}</div></div>`;
+}
+
+function fmt(n){
+  const v = parseFloat(n)||0;
+  if(v>=1000000) return (v/1000000).toFixed(2)+'M';
+  if(v>=1000)    return (v/1000).toFixed(0)+'K';
+  return v.toFixed(0);
+}
+
+// ═══════════════════════════════════
+// NAVIGATION & FILTERS
+// ═══════════════════════════════════
+const secTitles = {resumen:'Resumen Ejecutivo',segmentacion:'Segmentación',gestiones:'Gestiones',alertas:'Alertas',efectividad:'Efectividad',insights:'Insights'};
+
+function showSection(id, el){
   document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   document.getElementById('sec-'+id).classList.add('active');
   if(el) el.classList.add('active');
-  document.getElementById('topbar-title').textContent = sectionTitles[id];
+  document.getElementById('topbar-title').textContent = secTitles[id];
 }
 
-function applyFilters() {
-  if (!DATA) return;
-  const tramo = document.getElementById('filter-tramo').value;
-  const prio  = document.getElementById('filter-prioridad').value;
-  document.querySelectorAll('#tramo-tbody tr').forEach((row,i) => {
-    const t = DATA.tramos[i];
-    if (!t) return;
-    row.style.display = (!tramo||t.name===tramo) && (!prio||t.prio===prio) ? '' : 'none';
+function applyFilters(){
+  if(!DATA) return;
+  const t = document.getElementById('filter-tramo').value;
+  const p = document.getElementById('filter-prioridad').value;
+  document.querySelectorAll('#tramo-tbody tr').forEach((row,i)=>{
+    const d = DATA.tramos[i];
+    if(!d) return;
+    row.style.display = (!t||d.name===t)&&(!p||d.prio===p)?'':'none';
   });
 }
 
-function resetFilters() {
+function resetFilters(){
   document.getElementById('filter-tramo').value = '';
   document.getElementById('filter-prioridad').value = '';
-  if (DATA) applyFilters();
-}
-
-// ══════════════════════════════════════════════
-// HELPERS
-// ══════════════════════════════════════════════
-function fmt(n) {
-  const v = parseFloat(n)||0;
-  if (v >= 1000000) return (v/1000000).toFixed(2)+'M';
-  if (v >= 1000)    return (v/1000).toFixed(0)+'K';
-  return v.toFixed(0);
+  if(DATA) applyFilters();
 }
 </script>
 </body>
